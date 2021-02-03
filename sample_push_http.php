@@ -31,9 +31,12 @@ require_once 'vendor/autoload.php';
 // Instantiate a new ApnsPHP_Push object
 $push = new ApnsPHP_Push(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
-	'UniversalPushNotificationClientSSLCertificate.pem',
+	'UniversalPushNotificationClientSSLCertificate.p8',
 	ApnsPHP_Abstract::PROTOCOL_HTTP
 );
+
+$push->setTeamId('sgfdgfdfgd');
+$push->setKeyId('klgjhkojmh75');
 
 // Set the write interval to null for the HTTP/2 Protocol.
 $push->setWriteInterval(0);
@@ -52,7 +55,7 @@ $message->setTopic('com.armiento.test');
 
 // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
 // over a ApnsPHP_Message object retrieved with the getErrors() message.
-$message->setCustomIdentifier("Message-Badge-3");
+$message->setCustomIdentifier('7530A828-E58E-433E-A38F-D8042208CF96');
 
 // Set badge icon to "3"
 $message->setBadge(3);

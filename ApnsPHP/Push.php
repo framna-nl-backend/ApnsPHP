@@ -255,11 +255,25 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 */
 	private function _httpSend(ApnsPHP_Message $message, &$sReply)
 	{
-		$aHeaders = array('Content-Type: application/json');
-		$sTopic = $message->getTopic();
-		if (!empty($sTopic)) {
-			$aHeaders[] = sprintf('apns-topic: %s', $sTopic);
+        $aHeaders = array('Content-Type: application/json');
+		if (!empty($message->getTopic())) {
+			$aHeaders[] = sprintf('apns-topic: %s', $message->getTopic());
 		}
+		if (!empty($message->getExpiry())) {
+			$aHeaders[] = sprintf('apns-expiration: %s', $message->getExpiry());
+		}
+		if (!empty($message->getPriority())) {
+			$aHeaders[] = sprintf('apns-priority: %s', $message->getPriority());
+		}
+		if (!empty($message->getCollapseId())) {
+			$aHeaders[] = sprintf('apns-collapse-id: %s', $message->getCollapseId());
+		}
+		if (!empty($message->getCustomIdentifier())) {
+			$aHeaders[] = sprintf('apns-id: %s', $message->getCustomIdentifier());
+		}
+		if (!empty($this->_sProviderToken)) {
+		    $aHeaders[] = sprintf('Authorization: Bearer %s', $this->_sProviderToken);
+        }
 
 		if (!(curl_setopt_array($this->_hSocket, array(
 			CURLOPT_POST => true,

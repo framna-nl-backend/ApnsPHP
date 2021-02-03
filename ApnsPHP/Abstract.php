@@ -28,6 +28,9 @@
  */
 
 use Psr\Log\LoggerInterface;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Ecdsa\Sha256;
+use Lcobucci\JWT\Configuration;
 
 /**
  * Abstract class: this is the superclass for all Apple Push Notification Service
@@ -64,6 +67,9 @@ abstract class ApnsPHP_Abstract
 
 	protected $_sProviderCertificateFile; /**< @type string Provider certificate file with key (Bundled PEM). */
 	protected $_sProviderCertificatePassphrase; /**< @type string Provider certificate passphrase. */
+	protected $_sProviderToken; /**< @type string|null Provider Authentication token. */
+	protected $_sProviderTeamId; /**< @type string|null Apple Team Identifier. */
+	protected $_sProviderKeyId; /**< @type string|null Apple Key Identifier. */
 	protected $_sRootCertificationAuthorityFile; /**< @type string Root certification authority file. */
 
 	protected $_nWriteInterval; /**< @type integer Write interval in micro seconds. */
@@ -106,7 +112,7 @@ abstract class ApnsPHP_Abstract
 			);
 		}
 		$this->_nProtocol = $nProtocol;
-
+		
 		$this->_nConnectTimeout = ini_get("default_socket_timeout");
 		$this->_nWriteInterval = self::WRITE_INTERVAL;
 		$this->_nConnectRetryInterval = self::CONNECT_RETRY_INTERVAL;
@@ -165,6 +171,26 @@ abstract class ApnsPHP_Abstract
 	public function setProviderCertificatePassphrase($sProviderCertificatePassphrase)
 	{
 		$this->_sProviderCertificatePassphrase = $sProviderCertificatePassphrase;
+	}
+
+	/**
+	 * Set the Team Identifier.
+	 *
+	 * @param  string $sTeamId Apple Team Identifier.
+	 */
+	public function setTeamId($sTeamId)
+	{
+		$this->_sProviderTeamId = $sTeamId;
+	}
+
+	/**
+	 * Set the Key Identifier.
+	 *
+	 * @param  string $sKeyId Apple Key Identifier.
+	 */
+	public function setKeyId($sKeyId)
+	{
+		$this->_sProviderKeyId = $sKeyId;
 	}
 
 	/**
@@ -401,7 +427,7 @@ abstract class ApnsPHP_Abstract
 	 */
 	protected function _httpInit()
 	{
-		$this->_log("INFO: Trying to initialize HTTP/2 backend...");
+		$this->_logger()->info("Trying to initialize HTTP/2 backend...");
 
 		$this->_hSocket = curl_init();
 		if (!$this->_hSocket) {
@@ -413,24 +439,41 @@ abstract class ApnsPHP_Abstract
 		if (!defined('CURL_HTTP_VERSION_2_0')) {
 			define('CURL_HTTP_VERSION_2_0', 3);
 		}
+		$aCurlOpts = array(
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2_0,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_USERAGENT => 'ApnsPHP',
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_VERBOSE => false
+        );
 
-		if (!curl_setopt_array($this->_hSocket, array(
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2_0,
-			CURLOPT_SSLCERT => $this->_sProviderCertificateFile,
-			CURLOPT_SSLCERTPASSWD => empty($this->_sProviderCertificatePassphrase) ? null : $this->_sProviderCertificatePassphrase,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_USERAGENT => 'ApnsPHP',
-			CURLOPT_CONNECTTIMEOUT => 10,
-			CURLOPT_TIMEOUT => 30,
-			CURLOPT_SSL_VERIFYPEER => true,
-			CURLOPT_VERBOSE => false
-		))) {
+		if (strpos($this->_sProviderCertificateFile, '.pem') !== false) {
+            $this->_logger()->info("Initializing HTTP/2 backend with certificate.");
+		    $aCurlOpts[CURLOPT_SSLCERT] = $this->_sProviderCertificateFile;
+		    $aCurlOpts[CURLOPT_SSLCERTPASSWD] = empty($this->_sProviderCertificatePassphrase) ? null : $this->_sProviderCertificatePassphrase;
+        }
+
+        if (strpos($this->_sProviderCertificateFile, '.p8') !== false) {
+            $this->_logger()->info("Initializing HTTP/2 backend with key.");
+            $cKey   = new Key\LocalFileReference('file://' . $this->_sProviderCertificateFile);
+            $cToken = Configuration::forUnsecuredSigner()->builder()
+                                                        ->issuedBy($this->_sProviderTeamId)
+                                                        ->issuedAt(new DateTimeImmutable())
+                                                        ->withHeader('kid', $this->_sProviderKeyId)
+                                                        ->getToken(new Sha256(), $cKey);
+
+            $this->_sProviderToken = (string) $cToken;
+        }
+
+		if (!curl_setopt_array($this->_hSocket, $aCurlOpts)) {
 			throw new ApnsPHP_Exception(
 				"Unable to initialize HTTP/2 backend."
 			);
 		}
 
-		$this->_log("INFO: Initialized HTTP/2 backend.");
+		$this->_logger()->info("Initialized HTTP/2 backend.");
 
 		return true;
 	}
@@ -443,7 +486,7 @@ abstract class ApnsPHP_Abstract
 	 */
 	protected function _binaryConnect($sURL)
 	{
-		$this->_log("Trying {$sURL}...");
+		$this->_logger()->info("Trying {$sURL}...");
 		$sURL = $this->_aServiceURLs[$this->_nEnvironment];
 
 		$this->_logger()->info("Trying {$sURL}...");
@@ -478,7 +521,7 @@ abstract class ApnsPHP_Abstract
 
 		return true;
 	}
-
+	
 	/**
 	 * Return the Logger (with lazy loading)
 	 */
