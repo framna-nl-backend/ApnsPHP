@@ -55,6 +55,10 @@ class ApnsPHP_Message
 
 	protected $_mCustomIdentifier; /**< @type mixed Custom message identifier. */
 
+	protected $_sTopic; /**< @type string The topic of the remote notification, which is typically the bundle ID for your app. */
+	protected $_sCollapseId; /**< @type string The collapse ID of the remote notification. */
+	protected $_iPriority; /**< @type int The priority of the remote notification. */
+
 	/**
 	 * Constructor.
 	 *
@@ -561,6 +565,9 @@ class ApnsPHP_Message
 	 */
 	public function setCustomIdentifier($mCustomIdentifier)
 	{
+	    if (!preg_match('~[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}~i', $mCustomIdentifier)) {
+	        throw new ApnsPHP_Message_Exception('Identifier must be a UUID');
+        }
 		$this->_mCustomIdentifier = $mCustomIdentifier;
 	}
 
@@ -572,5 +579,70 @@ class ApnsPHP_Message
 	public function getCustomIdentifier()
 	{
 		return $this->_mCustomIdentifier;
+	}
+
+	/**
+	 * Set the topic of the remote notification, which is typically
+	 * the bundle ID for your app.
+	 *
+	 * @param  $sTopic @type string The topic of the remote notification.
+	 */
+	public function setTopic($sTopic)
+	{
+		$this->_sTopic = $sTopic;
+	}
+
+	/**
+	 * Get the topic of the remote notification.
+	 *
+	 * @return @type string The topic of the remote notification.
+	 */
+	public function getTopic()
+	{
+		return $this->_sTopic;
+	}
+
+	/**
+	 * Set the priority of the remote notification, which is 5 (low) or 10 (high).
+	 *
+	 * @param int $iPriority The priority of the remote notification.
+	 */
+	public function setPriority($iPriority)
+	{
+	    if (!in_array($iPriority, [5, 10])) {
+	        throw new ApnsPHP_Message_Exception('Invalid priority');
+        }
+
+		$this->_iPriority = $iPriority;
+	}
+
+	/**
+	 * Get the priority of the remote notification.
+	 *
+	 * @return int The priority of the remote notification.
+	 */
+	public function getPriority()
+	{
+		return $this->_iPriority;
+	}
+
+	/**
+	 * Set the collapse ID of the remote notification, notifications with the same collapse ID will show as one.
+	 *
+	 * @param string $sCollapseId The collapse ID of the remote notification.
+	 */
+	public function setCollapseId($sCollapseId)
+	{
+		$this->_sCollapseId = $sCollapseId;
+	}
+
+	/**
+	 * Get the collapse ID of the remote notification.
+	 *
+	 * @return int The collapse ID of the remote notification.
+	 */
+	public function getCollapseId()
+	{
+		return $this->_sCollapseId;
 	}
 }
