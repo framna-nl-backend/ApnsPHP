@@ -30,7 +30,7 @@ use Psr\Log\AbstractLogger;
  *
  * @ingroup ApnsPHP_Log
  */
-class ApnsPHP_Log_Embedded extends AbstractLogger
+class ApnsPHP_Log_Embedded extends AbstractLogger implements \Psr\Log\LoggerInterface
 {
 
     /**
