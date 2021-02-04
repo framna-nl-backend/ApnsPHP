@@ -11,6 +11,6 @@
 		"lib-openssl": "*"
 	},
 	"autoload": {
-        "psr-0": {"ApnsPHP": "ApnsPHP"}
+        "psr-0": {"ApnsPHP_": ""}
     }
 }
