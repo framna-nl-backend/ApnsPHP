@@ -107,6 +107,28 @@ class ApnsPHP_Message
 	}
 
 	/**
+	 * Get a recipient.
+	 *
+	 * @param  $nRecipient @type integer @optional Recipient number to return.
+	 * @throws ApnsPHP_Message_Exception if no recipient number
+	 *         exists.
+	 * @return @type string The recipient token at index $nRecipient.
+	 */
+	public function selfForRecipient($nRecipient = 0)
+	{
+		if (!isset($this->_aDeviceTokens[$nRecipient])) {
+			throw new ApnsPHP_Message_Exception(
+				"No recipient at index '{$nRecipient}'"
+			);
+		}
+
+		$copy = clone $this;
+		$copy->_aDeviceTokens = [$this->_aDeviceTokens[$nRecipient]];
+
+		return $copy;
+	}
+
+	/**
 	 * Get the number of recipients.
 	 *
 	 * @return @type integer Recipient's number.

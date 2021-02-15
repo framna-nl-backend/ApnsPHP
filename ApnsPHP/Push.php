@@ -117,7 +117,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		for ($i = 0; $i < $nRecipients; $i++) {
 			$nMessageID = $nMessageQueueLen + $i + 1;
 			$aMessage = array(
-				'MESSAGE' => $message,
+				'MESSAGE' => $message->selfForRecipient($i),
 				'ERRORS' => array()
 			);
 			if ($this->_nProtocol === self::PROTOCOL_BINARY) {
@@ -251,7 +251,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 * @param  $sReply @type string The reply message.
-	 * @return @type xxx Xxxxx.
+	 * @return bool success of API call
 	 */
 	private function _httpSend(ApnsPHP_Message $message, &$sReply)
 	{
