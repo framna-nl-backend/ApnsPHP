@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * ApnsPHP_Message_Exception class definition.
+ * MessageException class definition.
  *
  * LICENSE
  *
@@ -23,8 +24,6 @@ use ApnsPHP\BaseException;
 
 /**
  * Exception class.
- *
- * @ingroup ApnsPHP_Message
  */
 class MessageException extends BaseException
 {

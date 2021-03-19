@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * ApnsPHP_Feedback class definition.
+ * Feedback class definition.
  *
  * LICENSE
  *
@@ -17,11 +18,6 @@
  * @version $Id$
  */
 
-/**
- * @defgroup ApnsPHP_Feedback Feedback
- * @ingroup ApplePushNotificationService
- */
-
 namespace ApnsPHP;
 
 /**
@@ -35,85 +31,90 @@ namespace ApnsPHP;
  * on the identified devices, a provider should stop sending notifications to these
  * devices.
  *
- * @ingroup ApnsPHP_Feedback
  * @see http://tinyurl.com/ApplePushNotificationFeedback
  */
 class Feedback extends SharedConfig
 {
-	const TIME_BINARY_SIZE = 4; /**< @type integer Timestamp binary size in bytes. */
-	const TOKEN_LENGTH_BINARY_SIZE = 2; /**< @type integer Token length binary size in bytes. */
+    /**< @type integer Timestamp binary size in bytes. */
+    protected const TIME_BINARY_SIZE = 4;
 
-	protected $_aServiceURLs = array(
-		'tls://feedback.push.apple.com:2196', // Production environment
-		'tls://feedback.sandbox.push.apple.com:2196' // Sandbox environment
-	); /**< @type array Feedback URLs environments. */
+    /**< @type integer Token length binary size in bytes. */
+    protected const TOKEN_LENGTH_BINARY_SIZE = 2;
 
-	protected $_aFeedback; /**< @type array Feedback container. */
+    protected $serviceURLs = array(
+        'tls://feedback.push.apple.com:2196', // Production environment
+        'tls://feedback.sandbox.push.apple.com:2196' // Sandbox environment
+    ); /**< @type array Feedback URLs environments. */
 
-	/**
-	 * Receives feedback tuples from Apple Push Notification Service feedback.
-	 *
-	 * Every tuple (array) contains:
-	 * @li @c timestamp indicating when the APNs determined that the application
-	 *     no longer exists on the device. This value represents the seconds since
-	 *     1970, anchored to UTC. You should use the timestamp to determine if the
-	 *     application on the device re-registered with your service since the moment
-	 *     the device token was recorded on the feedback service. If it hasn’t,
-	 *     you should cease sending push notifications to the device.
-	 * @li @c tokenLength The length of the device token (usually 32 bytes).
-	 * @li @c deviceToken The device token.
-	 *
-	 * @return @type array Array of feedback tuples (array).
-	 */
-	public function receive()
-	{
-		$nFeedbackTupleLen = self::TIME_BINARY_SIZE + self::TOKEN_LENGTH_BINARY_SIZE + self::DEVICE_BINARY_SIZE;
+    protected $feedback; /**< @type array Feedback container. */
 
-		$this->_aFeedback = array();
-		$sBuffer = '';
-		while (!feof($this->_hSocket)) {
-			$this->_logger()->info('Reading...');
-			$sBuffer .= $sCurrBuffer = fread($this->_hSocket, 8192);
-			$nCurrBufferLen = strlen($sCurrBuffer);
-			if ($nCurrBufferLen > 0) {
-				$this->_logger()->info("{$nCurrBufferLen} bytes read.");
-			}
-			unset($sCurrBuffer, $nCurrBufferLen);
+    /**
+     * Receives feedback tuples from Apple Push Notification Service feedback.
+     *
+     * Every tuple (array) contains:
+     * @li @c timestamp indicating when the APNs determined that the application
+     *     no longer exists on the device. This value represents the seconds since
+     *     1970, anchored to UTC. You should use the timestamp to determine if the
+     *     application on the device re-registered with your service since the moment
+     *     the device token was recorded on the feedback service. If it hasn’t,
+     *     you should cease sending push notifications to the device.
+     * @li @c tokenLength The length of the device token (usually 32 bytes).
+     * @li @c deviceToken The device token.
+     *
+     * @return @type array Array of feedback tuples (array).
+     */
+    public function receive()
+    {
+        $feedbackTupleLength = self::TIME_BINARY_SIZE + self::TOKEN_LENGTH_BINARY_SIZE + self::DEVICE_BINARY_SIZE;
 
-			$nBufferLen = strlen($sBuffer);
-			if ($nBufferLen >= $nFeedbackTupleLen) {
-				$nFeedbackTuples = floor($nBufferLen / $nFeedbackTupleLen);
-				for ($i = 0; $i < $nFeedbackTuples; $i++) {
-					$sFeedbackTuple = substr($sBuffer, 0, $nFeedbackTupleLen);
-					$sBuffer = substr($sBuffer, $nFeedbackTupleLen);
-					$this->_aFeedback[] = $aFeedback = $this->_parseBinaryTuple($sFeedbackTuple);
-					$this->_logger()->info(sprintf("New feedback tuple: timestamp=%d (%s), tokenLength=%d, deviceToken=%s.",
-						$aFeedback['timestamp'], date('Y-m-d H:i:s', $aFeedback['timestamp']),
-						$aFeedback['tokenLength'], $aFeedback['deviceToken']
-					));
-					unset($aFeedback);
-				}
-			}
+        $this->feedback = array();
+        $buffer = '';
+        while (!feof($this->hSocket)) {
+            $this->logger()->info('Reading...');
+            $buffer .= $currBuffer = fread($this->hSocket, 8192);
+            $currBufferLength = strlen($currBuffer);
+            if ($currBufferLength > 0) {
+                $this->logger()->info("{$currBufferLength} bytes read.");
+            }
+            unset($currBuffer, $currBufferLength);
 
-			$read = array($this->_hSocket);
-			$null = NULL;
-			$nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
-			if ($nChangedStreams === false) {
-				$this->_logger()->warning('Unable to wait for a stream availability.');
-				break;
-			}
-		}
-		return $this->_aFeedback;
-	}
+            $bufferLength = strlen($buffer);
+            if ($bufferLength >= $feedbackTupleLength) {
+                $feedbackTuples = floor($bufferLength / $feedbackTupleLength);
+                for ($i = 0; $i < $feedbackTuples; $i++) {
+                    $feedbackTuple = substr($buffer, 0, $feedbackTupleLength);
+                    $buffer = substr($buffer, $feedbackTupleLength);
+                    $this->feedback[] = $feedback = $this->parseBinaryTuple($feedbackTuple);
+                    $this->logger()->info(sprintf(
+                        "New feedback tuple: timestamp=%d (%s), tokenLength=%d, deviceToken=%s.",
+                        $feedback['timestamp'],
+                        date('Y-m-d H:i:s', $feedback['timestamp']),
+                        $feedback['tokenLength'],
+                        $feedback['deviceToken']
+                    ));
+                    unset($feedback);
+                }
+            }
 
-	/**
-	 * Parses binary tuples.
-	 *
-	 * @param  $sBinaryTuple @type string A binary tuple to parse.
-	 * @return @type array Array with timestamp, tokenLength and deviceToken keys.
-	 */
-	protected function _parseBinaryTuple($sBinaryTuple)
-	{
-		return unpack('Ntimestamp/ntokenLength/H*deviceToken', $sBinaryTuple);
-	}
+            $read = array($this->hSocket);
+            $null = null;
+            $changedStreams = stream_select($read, $null, $null, 0, $this->socketSelectTimeout);
+            if ($changedStreams === false) {
+                $this->logger()->warning('Unable to wait for a stream availability.');
+                break;
+            }
+        }
+        return $this->feedback;
+    }
+
+    /**
+     * Parses binary tuples.
+     *
+     * @param  $binaryTuple @type string A binary tuple to parse.
+     * @return @type array Array with timestamp, tokenLength and deviceToken keys.
+     */
+    protected function parseBinaryTuple($binaryTuple)
+    {
+        return unpack('Ntimestamp/ntokenLength/H*deviceToken', $binaryTuple);
+    }
 }

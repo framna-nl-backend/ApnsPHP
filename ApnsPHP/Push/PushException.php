@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * PushException class definition.
@@ -23,8 +24,6 @@ use ApnsPHP\BaseException;
 
 /**
  * Exception class.
- *
- * @ingroup ApnsPHP_Push
  */
 class PushException extends BaseException
 {

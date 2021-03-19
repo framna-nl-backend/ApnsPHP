@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * ApnsPHP_Log_Embedded class definition.
+ * EmbeddedLogger class definition.
  *
  * LICENSE
  *
@@ -29,8 +30,6 @@ use Psr\Log\AbstractLogger;
  *
  * This simple logger outputs The Message to standard output prefixed with date,
  * service name (ApplePushNotificationService) and Process ID (PID).
- *
- * @ingroup ApnsPHP_Log
  */
 class EmbeddedLogger extends AbstractLogger implements \Psr\Log\LoggerInterface
 {
@@ -45,9 +44,12 @@ class EmbeddedLogger extends AbstractLogger implements \Psr\Log\LoggerInterface
      */
     public function log($level, $message, array $context = array())
     {
-        printf("%s: %s ApnsPHP[%d]: %s\n",
-            date('r'), strtoupper($level), getmypid(), trim($message)
+        printf(
+            "%s: %s ApnsPHP[%d]: %s\n",
+            date('r'),
+            strtoupper($level),
+            getmypid(),
+            trim($message)
         );
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * BaseException class definition.
@@ -23,8 +24,6 @@ use Exception;
 
 /**
  * Exception class.
- *
- * @ingroup ApplePushNotificationService
  */
 class BaseException extends Exception
 {

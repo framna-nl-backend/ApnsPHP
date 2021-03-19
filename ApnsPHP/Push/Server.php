@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * ApnsPHP_Push_Server class definition.
+ * Server class definition.
  *
  * LICENSE
  *
@@ -17,11 +18,6 @@
  * @version $Id$
  */
 
-/**
- * @defgroup ApnsPHP_Push_Server Server
- * @ingroup ApnsPHP_Push
- */
-
 namespace ApnsPHP\Push;
 
 use ApnsPHP\BaseException;
@@ -35,311 +31,332 @@ use ApnsPHP\Push\Server\ServerException;
  * The class manages multiple Push Notification Providers and an inter-process message
  * queue. This class is useful to parallelize and speed-up send activities to Apple
  * Push Notification service.
- *
- * @ingroup ApnsPHP_Push_Server
  */
 class Server extends Push
 {
-	const MAIN_LOOP_USLEEP = 200000; /**< @type integer Main loop sleep time in micro seconds. */
-	const SHM_SIZE = 524288; /**< @type integer Shared memory size in bytes useful to store message queues. */
-	const SHM_MESSAGES_QUEUE_KEY_START = 1000; /**< @type integer Message queue start identifier for messages. For every process 1 is added to this number. */
-	const SHM_ERROR_MESSAGES_QUEUE_KEY = 999; /**< @type integer Message queue identifier for not delivered messages. */
+    /**< @type integer Main loop sleep time in micro seconds. */
+    protected const MAIN_LOOP_USLEEP = 200000;
 
-	protected $_nProcesses = 3; /**< @type integer The number of processes to start. */
-	protected $_aPids = array(); /**< @type array Array of process PIDs. */
-	protected $_nParentPid; /**< @type integer The parent process id. */
-	protected $_nCurrentProcess; /**< @type integer Cardinal process number (0, 1, 2, ...). */
-	protected $_nRunningProcesses; /**< @type integer The number of running processes. */
+    /**< @type integer Shared memory size in bytes useful to store message queues. */
+    protected const SHM_SIZE = 524288;
 
-	protected $_hShm; /**< @type resource Shared memory. */
-	protected $_hSem; /**< @type resource Semaphore. */
+    /**< @type integer Message queue start identifier for messages.
+     * For every process 1 is added to this number. */
+    protected const SHM_MESSAGES_QUEUE_KEY_START = 1000;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param  $nEnvironment @type integer Environment.
-	 * @param  $sProviderCertificateFile @type string Provider certificate file
-	 *         with key (Bundled PEM).
-	 * @throws ServerException if is unable to
-	 *         get Shared Memory Segment or Semaphore ID.
-	 */
-	public function __construct($nEnvironment, $sProviderCertificateFile)
-	{
-		parent::__construct($nEnvironment, $sProviderCertificateFile);
+    /**< @type integer Message queue identifier for not delivered messages. */
+    protected const SHM_ERROR_MESSAGES_QUEUE_KEY = 999;
 
-		$this->_nParentPid = posix_getpid();
-		$this->_hShm = shm_attach(mt_rand(), self::SHM_SIZE);
-		if ($this->_hShm === false) {
-			throw new ServerException(
-				'Unable to get shared memory segment'
-			);
-		}
+    /**< @type integer The number of processes to start. */
+    protected $processes = 3;
 
-		$this->_hSem = sem_get(mt_rand());
-		if ($this->_hSem === false) {
-			throw new ServerException(
-				'Unable to get semaphore id'
-			);
-		}
+    /**< @type array Array of process PIDs. */
+    protected $pids = array();
 
-		register_shutdown_function(array($this, 'onShutdown'));
+    /**< @type integer The parent process id. */
+    protected $parentPid;
 
-		pcntl_signal(SIGCHLD, array($this, 'onChildExited'));
-		foreach(array(SIGTERM, SIGQUIT, SIGINT) as $nSignal) {
-			pcntl_signal($nSignal, array($this, 'onSignal'));
-		}
-	}
+    /**< @type integer Cardinal process number (0, 1, 2, ...). */
+    protected $currentProcess;
 
-	/**
-	 * Checks if the server is running and calls signal handlers for pending signals.
-	 *
-	 * Example:
-	 * @code
-	 * while ($Server->run()) {
-	 *     // do somethings...
-	 *     usleep(200000);
-	 * }
-	 * @endcode
-	 *
-	 * @return @type boolean True if the server is running.
-	 */
-	public function run()
-	{
-		pcntl_signal_dispatch();
-		return $this->_nRunningProcesses > 0;
-	}
+    /**< @type integer The number of running processes. */
+    protected $runningProcesses;
 
-	/**
-	 * Waits until a forked process has exited and decreases the current running
-	 * process number.
-	 */
-	public function onChildExited()
-	{
-		while (pcntl_waitpid(-1, $nStatus, WNOHANG) > 0) {
-			$this->_nRunningProcesses--;
-		}
-	}
+    /**< @type resource Shared memory. */
+    protected $shm;
 
-	/**
-	 * When a child (not the parent) receive a signal of type TERM, QUIT or INT
-	 * exits from the current process and decreases the current running process number.
-	 *
-	 * @param  $nSignal @type integer Signal number.
-	 */
-	public function onSignal($nSignal)
-	{
-		switch ($nSignal) {
-			case SIGTERM:
-			case SIGQUIT:
-			case SIGINT:
-				if (($nPid = posix_getpid()) != $this->_nParentPid) {
-					$this->_logger()->info("Child $nPid received signal #{$nSignal}, shutdown...");
-					$this->_nRunningProcesses--;
-					exit(0);
-				}
-				break;
-			default:
-				$this->_logger()->info("Ignored signal #{$nSignal}.");
-				break;
-		}
-	}
+    /**< @type resource Semaphore. */
+    protected $sem;
 
-	/**
-	 * When the parent process exits, cleans shared memory and semaphore.
-	 *
-	 * This is called using 'register_shutdown_function' pattern.
-	 * @see http://php.net/register_shutdown_function
-	 */
-	public function onShutdown()
-	{
-		if (posix_getpid() == $this->_nParentPid) {
-			$this->_logger()->info('Parent shutdown, cleaning memory...');
-			@shm_remove($this->_hShm) && @shm_detach($this->_hShm);
-			@sem_remove($this->_hSem);
-		}
-	}
+    /**
+     * Constructor.
+     *
+     * @param  $environment @type integer Environment.
+     * @param  $providerCertificateFile @type string Provider certificate file
+     *         with key (Bundled PEM).
+     * @throws ServerException if is unable to
+     *         get Shared Memory Segment or Semaphore ID.
+     */
+    public function __construct($environment, $providerCertificateFile)
+    {
+        parent::__construct($environment, $providerCertificateFile);
 
-	/**
-	 * Set the total processes to start, default is 3.
-	 *
-	 * @param  $nProcesses @type integer Processes to start up.
-	 */
-	public function setProcesses($nProcesses)
-	{
-		$nProcesses = (int)$nProcesses;
-		if ($nProcesses <= 0) {
-			return;
-		}
-		$this->_nProcesses = $nProcesses;
-	}
+        $this->parentPid = posix_getpid();
+        $this->shm = shm_attach(mt_rand(), self::SHM_SIZE);
+        if ($this->shm === false) {
+            throw new ServerException(
+                'Unable to get shared memory segment'
+            );
+        }
 
-	/**
-	 * Starts the server forking all processes and return immediately.
-	 *
-	 * Every forked process is connected to Apple Push Notification Service on start
-	 * and enter on the main loop.
-	 */
-	public function start()
-	{
-		for ($i = 0; $i < $this->_nProcesses; $i++) {
-			$this->_nCurrentProcess = $i;
-			$this->_aPids[$i] = $nPid = pcntl_fork();
-			if ($nPid == -1) {
-				$this->_logger()->warning('Could not fork');
-			} else if ($nPid > 0) {
-				// Parent process
-				$this->_logger()->info("Forked process PID {$nPid}");
-				$this->_nRunningProcesses++;
-			} else {
-				// Child process
-				try {
-					parent::connect();
-				} catch (BaseException $e) {
-					$this->_logger()->error($e->getMessage() . ', exiting...');
-					exit(1);
-				}
-				$this->_mainLoop();
-				parent::disconnect();
-				exit(0);
-			}
-		}
-	}
+        $this->sem = sem_get(mt_rand());
+        if ($this->sem === false) {
+            throw new ServerException(
+                'Unable to get semaphore id'
+            );
+        }
 
-	/**
-	 * Adds a message to the inter-process message queue.
-	 *
-	 * Messages are added to the queues in a round-robin fashion starting from the
-	 * first process to the last.
-	 *
-	 * @param  $message @type ApnsPHP_Message The message.
-	 */
-	public function add(Message $message)
-	{
-		static $n = 0;
-		if ($n >= $this->_nProcesses) {
-			$n = 0;
-		}
-		sem_acquire($this->_hSem);
-		$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n);
-		$aQueue[] = $message;
-		$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n, $aQueue);
-		sem_release($this->_hSem);
-		$n++;
-	}
+        register_shutdown_function(array($this, 'onShutdown'));
 
-	/**
-	 * Returns messages in the message queue.
-	 *
-	 * When a message is successful sent or reached the maximum retry time is removed
-	 * from the message queue and inserted in the Errors container. Use the getErrors()
-	 * method to retrive messages with delivery error(s).
-	 *
-	 * @param  $bEmpty @type boolean @optional Empty message queue.
-	 * @return @type array Array of messages left on the queue.
-	 */
-	public function getQueue($bEmpty = true)
-	{
-		$aRet = array();
-		sem_acquire($this->_hSem);
-		for ($i = 0; $i < $this->_nProcesses; $i++) {
-			$aRet = array_merge($aRet, $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i));
-			if ($bEmpty) {
-				$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i);
-			}
-		}
-		sem_release($this->_hSem);
-		return $aRet;
-	}
+        pcntl_signal(SIGCHLD, array($this, 'onChildExited'));
+        foreach (array(SIGTERM, SIGQUIT, SIGINT) as $signal) {
+            pcntl_signal($signal, array($this, 'onSignal'));
+        }
+    }
 
-	/**
-	 * Returns messages not delivered to the end user because one (or more) error
-	 * occurred.
-	 *
-	 * @param  $bEmpty @type boolean @optional Empty message container.
-	 * @return @type array Array of messages not delivered because one or more errors
-	 *         occurred.
-	 */
-	public function getErrors($bEmpty = true)
-	{
-		sem_acquire($this->_hSem);
-		$aRet = $this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY);
-		if ($bEmpty) {
-			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, array());
-		}
-		sem_release($this->_hSem);
-		return $aRet;
-	}
+    /**
+     * Checks if the server is running and calls signal handlers for pending signals.
+     *
+     * Example:
+     * @code
+     * while ($Server->run()) {
+     *     // do somethings...
+     *     usleep(200000);
+     * }
+     * @endcode
+     *
+     * @return @type boolean True if the server is running.
+     */
+    public function run()
+    {
+        pcntl_signal_dispatch();
+        return $this->runningProcesses > 0;
+    }
 
-	/**
-	 * The process main loop.
-	 *
-	 * During the main loop: the per-process error queue is read and the common error message
-	 * container is populated; the per-process message queue is spooled (message from
-	 * this queue is added to ApnsPHP_Push queue and delivered).
-	 */
-	protected function _mainLoop()
-	{
-		while (true) {
-			pcntl_signal_dispatch();
+    /**
+     * Waits until a forked process has exited and decreases the current running
+     * process number.
+     */
+    public function onChildExited()
+    {
+        while (pcntl_waitpid(-1, $status, WNOHANG) > 0) {
+            $this->runningProcesses--;
+        }
+    }
 
-			if (posix_getppid() != $this->_nParentPid) {
-				$this->_logger()->info("Parent process {$this->_nParentPid} died unexpectedly, exiting...");
-				break;
-			}
+    /**
+     * When a child (not the parent) receive a signal of type TERM, QUIT or INT
+     * exits from the current process and decreases the current running process number.
+     *
+     * @param  $signal @type integer Signal number.
+     */
+    public function onSignal($signal)
+    {
+        switch ($signal) {
+            case SIGTERM:
+            case SIGQUIT:
+            case SIGINT:
+                if (($pid = posix_getpid()) != $this->parentPid) {
+                    $this->logger()->info("Child $pid received signal #{$signal}, shutdown...");
+                    $this->runningProcesses--;
+                    exit(0);
+                }
+                break;
+            default:
+                $this->logger()->info("Ignored signal #{$signal}.");
+                break;
+        }
+    }
 
-			sem_acquire($this->_hSem);
-			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0,
-				array_merge($this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getErrors())
-			);
+    /**
+     * When the parent process exits, cleans shared memory and semaphore.
+     *
+     * This is called using 'register_shutdown_function' pattern.
+     * @see http://php.net/register_shutdown_function
+     */
+    public function onShutdown()
+    {
+        if (posix_getpid() == $this->parentPid) {
+            $this->logger()->info('Parent shutdown, cleaning memory...');
+            @shm_remove($this->shm) && @shm_detach($this->shm);
+            @sem_remove($this->sem);
+        }
+    }
 
-			$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
-			foreach($aQueue as $message) {
-				parent::add($message);
-			}
-			$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
-			sem_release($this->_hSem);
+    /**
+     * Set the total processes to start, default is 3.
+     *
+     * @param  $processes @type integer Processes to start up.
+     */
+    public function setProcesses($processes)
+    {
+        $processes = (int)$processes;
+        if ($processes <= 0) {
+            return;
+        }
+        $this->processes = $processes;
+    }
 
-			$nMessages = count($aQueue);
-			if ($nMessages > 0) {
-				$this->_logger()->info('Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
-				parent::send();
-			} else {
-				usleep(self::MAIN_LOOP_USLEEP);
-			}
-		}
-	}
+    /**
+     * Starts the server forking all processes and return immediately.
+     *
+     * Every forked process is connected to Apple Push Notification Service on start
+     * and enter on the main loop.
+     */
+    public function start()
+    {
+        for ($i = 0; $i < $this->processes; $i++) {
+            $this->currentProcess = $i;
+            $this->pids[$i] = $pid = pcntl_fork();
+            if ($pid == -1) {
+                $this->logger()->warning('Could not fork');
+            } elseif ($pid > 0) {
+                // Parent process
+                $this->logger()->info("Forked process PID {$pid}");
+                $this->runningProcesses++;
+            } else {
+                // Child process
+                try {
+                    parent::connect();
+                } catch (BaseException $e) {
+                    $this->logger()->error($e->getMessage() . ', exiting...');
+                    exit(1);
+                }
+                $this->mainLoop();
+                parent::disconnect();
+                exit(0);
+            }
+        }
+    }
 
-	/**
-	 * Returns the queue from the shared memory.
-	 *
-	 * @param  $nQueueKey @type integer The key of the queue stored in the shared
-	 *         memory.
-	 * @param  $nProcess @type integer @optional The process cardinal number.
-	 * @return @type array Array of messages from the queue.
-	 */
-	protected function _getQueue($nQueueKey, $nProcess = 0)
-	{
-		if (!shm_has_var($this->_hShm, $nQueueKey + $nProcess)) {
-			return array();
-		}
-		return shm_get_var($this->_hShm, $nQueueKey + $nProcess);
-	}
+    /**
+     * Adds a message to the inter-process message queue.
+     *
+     * Messages are added to the queues in a round-robin fashion starting from the
+     * first process to the last.
+     *
+     * @param  $message @type Message The message.
+     */
+    public function add(Message $message)
+    {
+        static $n = 0;
+        if ($n >= $this->processes) {
+            $n = 0;
+        }
+        sem_acquire($this->sem);
+        $queue = $this->getSHMQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n);
+        $queue[] = $message;
+        $this->setSHMQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n, $queue);
+        sem_release($this->sem);
+        $n++;
+    }
 
-	/**
-	 * Store the queue into the shared memory.
-	 *
-	 * @param  $nQueueKey @type integer The key of the queue to store in the shared
-	 *         memory.
-	 * @param  $nProcess @type integer @optional The process cardinal number.
-	 * @param  $aQueue @type array @optional The queue to store into shared memory.
-	 *         The default value is an empty array, useful to empty the queue.
-	 * @return @type boolean True on success, false otherwise.
-	 */
-	protected function _setQueue($nQueueKey, $nProcess = 0, $aQueue = array())
-	{
-		if (!is_array($aQueue)) {
-			$aQueue = array();
-		}
-		return shm_put_var($this->_hShm, $nQueueKey + $nProcess, $aQueue);
-	}
+    /**
+     * Returns messages in the message queue.
+     *
+     * When a message is successful sent or reached the maximum retry time is removed
+     * from the message queue and inserted in the Errors container. Use the getErrors()
+     * method to retrive messages with delivery error(s).
+     *
+     * @param  $empty @type boolean @optional Empty message queue.
+     * @return @type array Array of messages left on the queue.
+     */
+    public function getMessageQueue($empty = true)
+    {
+        $messages = array();
+        sem_acquire($this->sem);
+        for ($i = 0; $i < $this->processes; $i++) {
+            $messages = array_merge($messages, $this->getSHMQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i));
+            if ($empty) {
+                $this->setSHMQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i);
+            }
+        }
+        sem_release($this->sem);
+        return $messages;
+    }
+
+    /**
+     * Returns messages not delivered to the end user because one (or more) error
+     * occurred.
+     *
+     * @param  $empty @type boolean @optional Empty message container.
+     * @return @type array Array of messages not delivered because one or more errors
+     *         occurred.
+     */
+    public function getErrors($empty = true)
+    {
+        sem_acquire($this->sem);
+        $messages = $this->getSHMQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY);
+        if ($empty) {
+            $this->setSHMQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, array());
+        }
+        sem_release($this->sem);
+        return $messages;
+    }
+
+    /**
+     * The process main loop.
+     *
+     * During the main loop: the per-process error queue is read and the common error message
+     * container is populated; the per-process message queue is spooled (message from
+     * this queue is added to ApnsPHPPush queue and delivered).
+     */
+    protected function mainLoop()
+    {
+        while (true) {
+            pcntl_signal_dispatch();
+
+            if (posix_getppid() != $this->parentPid) {
+                $this->logger()->info("Parent process {$this->parentPid} died unexpectedly, exiting...");
+                break;
+            }
+
+            sem_acquire($this->sem);
+            $this->setSHMQueue(
+                self::SHM_ERROR_MESSAGES_QUEUE_KEY,
+                0,
+                array_merge($this->getSHMQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getErrors())
+            );
+
+            $queue = $this->getSHMQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->currentProcess);
+            foreach ($queue as $message) {
+                parent::add($message);
+            }
+            $this->setSHMQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->currentProcess);
+            sem_release($this->sem);
+
+            $messageAmount = count($queue);
+            if ($messageAmount > 0) {
+                $this->logger()->info('Process ' . ($this->currentProcess + 1) .
+                                       " has {$messageAmount} messages, sending...");
+                parent::send();
+            } else {
+                usleep(self::MAIN_LOOP_USLEEP);
+            }
+        }
+    }
+
+    /**
+     * Returns the queue from the shared memory.
+     *
+     * @param  $queueKey @type integer The key of the queue stored in the shared
+     *         memory.
+     * @param  $process @type integer @optional The process cardinal number.
+     * @return @type array Array of messages from the queue.
+     */
+    protected function getSHMQueue($queueKey, $process = 0)
+    {
+        if (!shm_has_var($this->shm, $queueKey + $process)) {
+            return array();
+        }
+        return shm_get_var($this->shm, $queueKey + $process);
+    }
+
+    /**
+     * Store the queue into the shared memory.
+     *
+     * @param  $queueKey @type integer The key of the queue to store in the shared
+     *         memory.
+     * @param  $process @type integer @optional The process cardinal number.
+     * @param  $queue @type array @optional The queue to store into shared memory.
+     *         The default value is an empty array, useful to empty the queue.
+     * @return @type boolean True on success, false otherwise.
+     */
+    protected function setSHMQueue($queueKey, $process = 0, $queue = array())
+    {
+        if (!is_array($queue)) {
+            $queue = array();
+        }
+        return shm_put_var($this->shm, $queueKey + $process, $queue);
+    }
 }
