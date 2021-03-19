@@ -29,8 +29,8 @@ error_reporting(-1);
 require_once 'vendor/autoload.php';
 
 // Instanciate a new ApnsPHP_Push object
-$server = new ApnsPHP_Push_Server(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$server = new \ApnsPHP\Push\Server(
+	\ApnsPHP\SharedConfig::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 
@@ -57,7 +57,7 @@ while ($server->run()) {
 	// Send 10 messages
 	if ($i <= 10) {
 		// Instantiate a new Message with a single recipient
-		$message = new ApnsPHP_Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
+		$message = new \ApnsPHP\Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 		// Set badge icon to "i"
 		$message->setBadge($i);

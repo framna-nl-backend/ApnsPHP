@@ -17,8 +17,12 @@
  * @version $Id$
  */
 
+namespace ApnsPHP\Message;
+
+use ApnsPHP\Message;
+
 /**
- * The Push Notification Custom Message.
+ * The Push Notification CustomMessage Message.
  *
  * The class represents a custom message to be delivered to an end user device.
  * Please refer to Table 3-2 for more information.
@@ -26,7 +30,7 @@
  * @ingroup ApnsPHP_Message
  * @see http://tinyurl.com/ApplePushNotificationPayload
  */
-class ApnsPHP_Message_Custom extends ApnsPHP_Message
+class CustomMessage extends Message
 {
 	protected $_sActionLocKey; /**< @type string The "View" button title. */
 	protected $_sLocKey; /**< @type string A key to an alert-message string in a Localizable.strings file */

@@ -1,12 +1,17 @@
 <?php
+
+namespace ApnsPHP\Message;
+
+use ApnsPHP\Message;
+
 /**
- * The Safari Push Notification Message.
+ * The SafariMessage Push Notification Message.
  *
- * The class represents a Safari Push Notification message.
+ * The class represents a SafariMessage Push Notification message.
  *
  * @ingroup ApnsPHP_Message
  */
-class ApnsPHP_Message_Safari extends ApnsPHP_Message
+class SafariMessage extends Message
 {
 	protected $_sTitle; /**< @type string The title of the notification. */
 	protected $_sAction; /**< @type string The label of the action button, if the user sets the notifications to appear as alerts. */

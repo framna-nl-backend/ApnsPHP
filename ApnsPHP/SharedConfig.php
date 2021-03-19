@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * ApnsPHP_Abstract class definition.
+ * SharedConfig class definition.
  *
  * LICENSE
  *
@@ -27,6 +27,9 @@
  * @defgroup ApplePushNotificationService ApnsPHP
  */
 
+namespace ApnsPHP;
+
+use ApnsPHP\Log\EmbeddedLogger;
 use Psr\Log\LoggerInterface;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Ecdsa\Sha256;
@@ -42,7 +45,7 @@ use Lcobucci\JWT\Configuration;
  * @ingroup ApplePushNotificationService
  * @see http://tinyurl.com/ApplePushNotificationService
  */
-abstract class ApnsPHP_Abstract
+abstract class SharedConfig
 {
 	const ENVIRONMENT_PRODUCTION = 0; /**< @type integer Production environment. */
 	const ENVIRONMENT_SANDBOX = 1; /**< @type integer Sandbox environment. */
@@ -87,27 +90,27 @@ abstract class ApnsPHP_Abstract
 	 * @param  $sProviderCertificateFile @type string Provider certificate file
 	 *         with key (Bundled PEM).
 	 * @param  $nProtocol @type integer Protocol.
-	 * @throws ApnsPHP_Exception if the environment is not
+	 * @throws BaseException if the environment is not
 	 *         sandbox or production or the provider certificate file is not readable.
 	 */
 	public function __construct($nEnvironment, $sProviderCertificateFile, $nProtocol = self::PROTOCOL_BINARY)
 	{
 		if ($nEnvironment != self::ENVIRONMENT_PRODUCTION && $nEnvironment != self::ENVIRONMENT_SANDBOX) {
-			throw new ApnsPHP_Exception(
+			throw new BaseException(
 				"Invalid environment '{$nEnvironment}'"
 			);
 		}
 		$this->_nEnvironment = $nEnvironment;
 
 		if (!is_readable($sProviderCertificateFile)) {
-			throw new ApnsPHP_Exception(
+			throw new BaseException(
 				"Unable to read certificate file '{$sProviderCertificateFile}'"
 			);
 		}
 		$this->_sProviderCertificateFile = $sProviderCertificateFile;
 
 		if ($nProtocol != self::PROTOCOL_BINARY && $nProtocol != self::PROTOCOL_HTTP) {
-			throw new ApnsPHP_Exception(
+			throw new BaseException(
 				"Invalid protocol '{$nProtocol}'"
 			);
 		}
@@ -129,22 +132,22 @@ abstract class ApnsPHP_Abstract
 	 * To set a custom logger you have to implement LoggerInterface
 	 * and use setLogger, otherwise standard logger will be used.
 	 *
-	 * @see Psr\Log\LoggerInterface
-	 * @see ApnsPHP_Log_Embedded
-	 *
 	 * @param  $logger @type LoggerInterface Logger instance.
-	 * @throws ApnsPHP_Exception if Logger is not an instance
+	 * @throws BaseException if Logger is not an instance
 	 *         of LoggerInterface.
+     * @see Psr\Log\LoggerInterface
+	 * @see EmbeddedLogger
+	 *
 	 */
 	public function setLogger(LoggerInterface $logger)
 	{
 		if (!is_object($logger)) {
-			throw new ApnsPHP_Exception(
+			throw new BaseException(
 				"The logger should be an instance of 'Psr\Log\LoggerInterface'"
 			);
 		}
 		if (!($logger instanceof LoggerInterface)) {
-			throw new ApnsPHP_Exception(
+			throw new BaseException(
 				"Unable to use an instance of '" . get_class($logger) . "' as logger: " .
 				"a logger must implements 'Psr\Log\LoggerInterface'."
 			);
@@ -205,13 +208,13 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $sRootCertificationAuthorityFile @type string Root Certification
 	 *         Authority file.
-	 * @throws ApnsPHP_Exception if Root Certification Authority
+	 * @throws BaseException if Root Certification Authority
 	 *         file is not readable.
 	 */
 	public function setRootCertificationAuthority($sRootCertificationAuthorityFile)
 	{
 		if (!is_readable($sRootCertificationAuthorityFile)) {
-			throw new ApnsPHP_Exception(
+			throw new BaseException(
 				"Unable to read Certificate Authority file '{$sRootCertificationAuthorityFile}'"
 			);
 		}
@@ -361,9 +364,7 @@ abstract class ApnsPHP_Abstract
 	 * Retries ConnectRetryTimes if unable to connect and waits setConnectRetryInterval
 	 * between each attempts.
 	 *
-	 * @see setConnectRetryTimes
-	 * @see setConnectRetryInterval
-	 * @throws ApnsPHP_Exception if is unable to connect after
+	 * @throws BaseException if is unable to connect after
 	 *         ConnectRetryTimes.
 	 */
 	public function connect()
@@ -373,7 +374,7 @@ abstract class ApnsPHP_Abstract
 		while (!$bConnected) {
 			try {
 				$bConnected = $this->_connect();
-			} catch (ApnsPHP_Exception $e) {
+			} catch (BaseException $e) {
 				$this->_logger()->error($e->getMessage());
 				if ($nRetry >= $this->_nConnectRetryTimes) {
 					throw $e;
@@ -422,8 +423,8 @@ abstract class ApnsPHP_Abstract
 	 * Initializes cURL, the HTTP/2 backend used to connect to Apple Push Notification
 	 * service server via HTTP/2 API protocol.
 	 *
-	 * @throws ApnsPHP_Exception if is unable to initialize.
 	 * @return @type boolean True if successful initialized.
+	 *@throws BaseException if is unable to initialize.
 	 */
 	protected function _httpInit()
 	{
@@ -431,8 +432,8 @@ abstract class ApnsPHP_Abstract
 
 		$this->_hSocket = curl_init();
 		if (!$this->_hSocket) {
-			throw new ApnsPHP_Exception(
-				"Unable to initialize HTTP/2 backend."
+			throw new BaseException(
+                "Unable to initialize HTTP/2 backend."
 			);
 		}
 
@@ -468,8 +469,8 @@ abstract class ApnsPHP_Abstract
         }
 
 		if (!curl_setopt_array($this->_hSocket, $aCurlOpts)) {
-			throw new ApnsPHP_Exception(
-				"Unable to initialize HTTP/2 backend."
+			throw new BaseException(
+                "Unable to initialize HTTP/2 backend."
 			);
 		}
 
@@ -481,7 +482,6 @@ abstract class ApnsPHP_Abstract
 	/**
 	 * Connects to Apple Push Notification service server via binary protocol.
 	 *
-	 * @throws ApnsPHP_Exception if is unable to connect.
 	 * @return @type boolean True if successful connected.
 	 */
 	protected function _binaryConnect($sURL)
@@ -509,8 +509,8 @@ abstract class ApnsPHP_Abstract
 			$this->_nConnectTimeout, STREAM_CLIENT_CONNECT, $streamContext);
 
 		if (!$this->_hSocket) {
-			throw new ApnsPHP_Exception(
-				"Unable to connect to '{$sURL}': {$sError} ({$nError})"
+			throw new BaseException(
+                "Unable to connect to '{$sURL}': {$sError} ({$nError})"
 			);
 		}
 
@@ -528,7 +528,7 @@ abstract class ApnsPHP_Abstract
 	protected function _logger()
 	{
 		if (!isset($this->_logger)) {
-			$this->_logger = new ApnsPHP_Log_Embedded();
+			$this->_logger = new EmbeddedLogger();
 		}
 
 		return $this->_logger;

@@ -22,6 +22,10 @@
  * @ingroup ApplePushNotificationService
  */
 
+namespace ApnsPHP;
+
+use ApnsPHP\Push\PushException;
+
 /**
  * The Push Notification Provider.
  *
@@ -30,7 +34,7 @@
  *
  * @ingroup ApnsPHP_Push
  */
-class ApnsPHP_Push extends ApnsPHP_Abstract
+class Push extends SharedConfig
 {
 	const COMMAND_PUSH = 1; /**< @type integer Payload command. */
 
@@ -108,7 +112,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 */
-	public function add(ApnsPHP_Message $message)
+	public function add(Message $message)
 	{
 		$sMessagePayload = $message->getPayload();
 		$nRecipients = $message->getRecipientsNumber();
@@ -135,19 +139,19 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	/**
 	 * Sends all messages in the message queue to Apple Push Notification Service.
 	 *
-	 * @throws ApnsPHP_Push_Exception if not connected to the
+	 * @throws PushException if not connected to the
 	 *         service or no notification queued.
 	 */
 	public function send()
 	{
 		if (!$this->_hSocket) {
-			throw new ApnsPHP_Push_Exception(
+			throw new PushException(
 				'Not connected to Push Notification Service'
 			);
 		}
 
 		if (empty($this->_aMessageQueue)) {
-			throw new ApnsPHP_Push_Exception(
+			throw new PushException(
 				'No notifications queued to be sent'
 			);
 		}
@@ -253,7 +257,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 * @param  $sReply @type string The reply message.
 	 * @return bool success of API call
 	 */
-	private function _httpSend(ApnsPHP_Message $message, &$sReply)
+	private function _httpSend(Message $message, &$sReply)
 	{
         $aHeaders = array('Content-Type: application/json');
 		if (!empty($message->getTopic())) {
@@ -442,18 +446,18 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $nMessageID @type integer The Message ID.
 	 * @param  $bError @type boolean @optional Insert the message in the Error container.
-	 * @throws ApnsPHP_Push_Exception if the Message ID is not valid or message
+	 * @throws PushException if the Message ID is not valid or message
 	 *         does not exists.
 	 */
 	protected function _removeMessageFromQueue($nMessageID, $bError = false)
 	{
 		if (!is_numeric($nMessageID) || $nMessageID <= 0) {
-			throw new ApnsPHP_Push_Exception(
+			throw new PushException(
 				'Message ID format is not valid.'
 			);
 		}
 		if (!isset($this->_aMessageQueue[$nMessageID])) {
-			throw new ApnsPHP_Push_Exception(
+			throw new PushException(
 				"The Message ID {$nMessageID} does not exists."
 			);
 		}

@@ -29,8 +29,8 @@ error_reporting(-1);
 require_once 'vendor/autoload.php';
 
 // Instanciate a new ApnsPHP_Feedback object
-$feedback = new ApnsPHP_Feedback(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$feedback = new \ApnsPHP\Feedback(
+	\ApnsPHP\SharedConfig::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 

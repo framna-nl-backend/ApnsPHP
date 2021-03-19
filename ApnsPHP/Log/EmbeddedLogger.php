@@ -17,20 +17,22 @@
  * @version $Id$
  */
 
+namespace ApnsPHP\Log;
+
 use Psr\Log\AbstractLogger;
 
 /**
  * A simple logger.
  *
  * This simple logger implements the Log Interface and is the default logger for
- * all ApnsPHP_Abstract based class.
+ * all SharedConfig based class.
  *
  * This simple logger outputs The Message to standard output prefixed with date,
  * service name (ApplePushNotificationService) and Process ID (PID).
  *
  * @ingroup ApnsPHP_Log
  */
-class ApnsPHP_Log_Embedded extends AbstractLogger implements \Psr\Log\LoggerInterface
+class EmbeddedLogger extends AbstractLogger implements \Psr\Log\LoggerInterface
 {
 
     /**

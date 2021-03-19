@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * ApnsPHP_Message_Exception class definition.
+ * ApnsPHP_Push_Server_Exception class definition.
  *
  * LICENSE
  *
@@ -17,11 +17,15 @@
  * @version $Id$
  */
 
+namespace ApnsPHP\Push\Server;
+
+use ApnsPHP\Push\PushException;
+
 /**
  * Exception class.
  *
- * @ingroup ApnsPHP_Message
+ * @ingroup ApnsPHP_Push_Server
  */
-class ApnsPHP_Message_Exception extends ApnsPHP_Exception
+class ServerException extends PushException
 {
 }

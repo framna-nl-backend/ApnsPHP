@@ -32,8 +32,8 @@ error_reporting(-1);
 require_once 'vendor/autoload.php';
 
 // Instanciate a new ApnsPHP_Push object
-$push = new ApnsPHP_Push(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$push = new \ApnsPHP\Push(
+	\ApnsPHP\SharedConfig::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 
@@ -51,7 +51,7 @@ $push->connect();
 
 for ($i = 1; $i <= 10; $i++) {
 	// Instantiate a new Message with a single recipient
-	$message = new ApnsPHP_Message($i == 5 ? INVALID_TOKEN : VALID_TOKEN);
+	$message = new \ApnsPHP\Message($i == 5 ? INVALID_TOKEN : VALID_TOKEN);
 
 	// Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
 	// over a ApnsPHP_Message object retrieved with the getErrors() message.

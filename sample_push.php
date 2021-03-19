@@ -29,8 +29,8 @@ error_reporting(-1);
 require_once 'vendor/autoload.php';
 
 // Instantiate a new ApnsPHP_Push object
-$push = new ApnsPHP_Push(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$push = new \ApnsPHP\Push(
+	\ApnsPHP\SharedConfig::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 
@@ -44,7 +44,7 @@ $push->setRootCertificationAuthority('entrust_root_certification_authority.pem')
 $push->connect();
 
 // Instantiate a new Message with a single recipient
-$message = new ApnsPHP_Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
+$message = new \ApnsPHP\Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
 // over a ApnsPHP_Message object retrieved with the getErrors() message.

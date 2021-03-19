@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * ApnsPHP_Push_Exception class definition.
+ * BaseException class definition.
  *
  * LICENSE
  *
@@ -17,11 +17,15 @@
  * @version $Id$
  */
 
+namespace ApnsPHP;
+
+use Exception;
+
 /**
  * Exception class.
  *
- * @ingroup ApnsPHP_Push
+ * @ingroup ApplePushNotificationService
  */
-class ApnsPHP_Push_Exception extends ApnsPHP_Exception
+class BaseException extends Exception
 {
 }

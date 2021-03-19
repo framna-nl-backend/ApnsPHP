@@ -22,6 +22,13 @@
  * @ingroup ApnsPHP_Push
  */
 
+namespace ApnsPHP\Push;
+
+use ApnsPHP\BaseException;
+use ApnsPHP\Message;
+use ApnsPHP\Push;
+use ApnsPHP\Push\Server\ServerException;
+
 /**
  * The Push Notification Server Provider.
  *
@@ -31,7 +38,7 @@
  *
  * @ingroup ApnsPHP_Push_Server
  */
-class ApnsPHP_Push_Server extends ApnsPHP_Push
+class Server extends Push
 {
 	const MAIN_LOOP_USLEEP = 200000; /**< @type integer Main loop sleep time in micro seconds. */
 	const SHM_SIZE = 524288; /**< @type integer Shared memory size in bytes useful to store message queues. */
@@ -53,7 +60,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * @param  $nEnvironment @type integer Environment.
 	 * @param  $sProviderCertificateFile @type string Provider certificate file
 	 *         with key (Bundled PEM).
-	 * @throws ApnsPHP_Push_Server_Exception if is unable to
+	 * @throws ServerException if is unable to
 	 *         get Shared Memory Segment or Semaphore ID.
 	 */
 	public function __construct($nEnvironment, $sProviderCertificateFile)
@@ -63,14 +70,14 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 		$this->_nParentPid = posix_getpid();
 		$this->_hShm = shm_attach(mt_rand(), self::SHM_SIZE);
 		if ($this->_hShm === false) {
-			throw new ApnsPHP_Push_Server_Exception(
+			throw new ServerException(
 				'Unable to get shared memory segment'
 			);
 		}
 
 		$this->_hSem = sem_get(mt_rand());
 		if ($this->_hSem === false) {
-			throw new ApnsPHP_Push_Server_Exception(
+			throw new ServerException(
 				'Unable to get semaphore id'
 			);
 		}
@@ -187,7 +194,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 				// Child process
 				try {
 					parent::connect();
-				} catch (ApnsPHP_Exception $e) {
+				} catch (BaseException $e) {
 					$this->_logger()->error($e->getMessage() . ', exiting...');
 					exit(1);
 				}
@@ -206,7 +213,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 *
 	 * @param  $message @type ApnsPHP_Message The message.
 	 */
-	public function add(ApnsPHP_Message $message)
+	public function add(Message $message)
 	{
 		static $n = 0;
 		if ($n >= $this->_nProcesses) {

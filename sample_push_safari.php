@@ -3,7 +3,7 @@
  * @file
  * sample_push_safari.php
  *
- * Safari push demo.
+ * SafariMessage push demo.
  *
  * LICENSE
  *
@@ -29,8 +29,8 @@ error_reporting(-1);
 require_once 'vendor/autoload.php';
 
 // Instantiate a new ApnsPHP_Push object
-$push = new ApnsPHP_Push(
-	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
+$push = new \ApnsPHP\Push(
+	\ApnsPHP\SharedConfig::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
 
@@ -43,8 +43,8 @@ $push->setRootCertificationAuthority('entrust_root_certification_authority.pem')
 // Connect to the Apple Push Notification Service
 $push->connect();
 
-// Instantiate a new Safari message with a single recipient
-$message = new ApnsPHP_Message_Safari('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
+// Instantiate a new SafariMessage message with a single recipient
+$message = new \ApnsPHP\Message\SafariMessage('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 // Set the title of the notification.
 $message->setTitle('Flight A998 Now Boarding');

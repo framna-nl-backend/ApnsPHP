@@ -22,6 +22,10 @@
  * @ingroup ApplePushNotificationService
  */
 
+namespace ApnsPHP;
+
+use ApnsPHP\Message\MessageException;
+
 /**
  * The Push Notification Message.
  *
@@ -31,7 +35,7 @@
  * @ingroup ApnsPHP_Message
  * @see http://tinyurl.com/ApplePushNotificationPayload
  */
-class ApnsPHP_Message
+class Message
 {
 	const PAYLOAD_MAXIMUM_SIZE = 2048; /**< @type integer The maximum size allowed for a notification payload. */
 	const APPLE_RESERVED_NAMESPACE = 'aps'; /**< @type string The Apple-reserved aps namespace. */
@@ -49,11 +53,11 @@ class ApnsPHP_Message
 	protected $_bMutableContent; /**< @type boolean True to activate mutable content key support for ios10 rich notifications. @see https://developer.apple.com/reference/usernotifications/unnotificationserviceextension */
 	protected $_sThreadID; /**< @type string notification thread-id. */
 
-	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
+	protected $_aCustomProperties; /**< @type mixed CustomMessage properties container. */
 
 	protected $_nExpiryValue = 604800; /**< @type integer That message will expire in 604800 seconds (86400 * 7, 7 days) if not successful delivered. */
 
-	protected $_mCustomIdentifier; /**< @type mixed Custom message identifier. */
+	protected $_mCustomIdentifier; /**< @type mixed CustomMessage message identifier. */
 
 	protected $_sTopic; /**< @type string The topic of the remote notification, which is typically the bundle ID for your app. */
 	protected $_sCollapseId; /**< @type string The collapse ID of the remote notification. */
@@ -75,13 +79,13 @@ class ApnsPHP_Message
 	 * Add a recipient device token.
 	 *
 	 * @param  $sDeviceToken @type string Recipients device token.
-	 * @throws ApnsPHP_Message_Exception if the device token
+	 * @throws MessageException if the device token
 	 *         is not well formed.
 	 */
 	public function addRecipient($sDeviceToken)
 	{
 		if (!preg_match('~^[a-f0-9]{64,}$~i', $sDeviceToken)) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"Invalid device token '{$sDeviceToken}'"
 			);
 		}
@@ -92,14 +96,14 @@ class ApnsPHP_Message
 	 * Get a recipient.
 	 *
 	 * @param  $nRecipient @type integer @optional Recipient number to return.
-	 * @throws ApnsPHP_Message_Exception if no recipient number
+	 * @throws MessageException if no recipient number
 	 *         exists.
 	 * @return @type string The recipient token at index $nRecipient.
 	 */
 	public function getRecipient($nRecipient = 0)
 	{
 		if (!isset($this->_aDeviceTokens[$nRecipient])) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"No recipient at index '{$nRecipient}'"
 			);
 		}
@@ -110,14 +114,14 @@ class ApnsPHP_Message
 	 * Get an object for a single recipient.
 	 *
 	 * @param  $nRecipient @type integer @optional Recipient number to return.
-	 * @throws ApnsPHP_Message_Exception if no recipient number
+	 * @return Message The message configured with the token at index $nRecipient.
+	 *@throws MessageException if no recipient number
 	 *         exists.
-	 * @return ApnsPHP_Message The message configured with the token at index $nRecipient.
 	 */
 	public function selfForRecipient($nRecipient = 0)
 	{
 		if (!isset($this->_aDeviceTokens[$nRecipient])) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"No recipient at index '{$nRecipient}'"
 			);
 		}
@@ -194,13 +198,13 @@ class ApnsPHP_Message
 	 * Set the number to badge the application icon with.
 	 *
 	 * @param  $nBadge @type integer A number to badge the application icon with.
-	 * @throws ApnsPHP_Message_Exception if badge is not an
+	 * @throws MessageException if badge is not an
 	 *         integer.
 	 */
 	public function setBadge($nBadge)
 	{
 		if (!is_int($nBadge)) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"Invalid badge number '{$nBadge}'"
 			);
 		}
@@ -283,13 +287,13 @@ class ApnsPHP_Message
 	 * @see http://tinyurl.com/ApplePushNotificationNewsstand
 	 *
 	 * @param  $bContentAvailable @type boolean True to initiates the Newsstand background download.
-	 * @throws ApnsPHP_Message_Exception if ContentAvailable is not a
+	 * @throws MessageException if ContentAvailable is not a
 	 *         boolean.
 	 */
 	public function setContentAvailable($bContentAvailable = true)
 	{
 		if (!is_bool($bContentAvailable)) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"Invalid content-available value '{$bContentAvailable}'"
 			);
 		}
@@ -311,13 +315,13 @@ class ApnsPHP_Message
 	 * @see https://developer.apple.com/reference/usernotifications/unnotificationserviceextension
 	 *
 	 * @param  $bMutableContent @type boolean True to enable flag
-	 * @throws ApnsPHP_Message_Exception if MutableContent is not a
+	 * @throws MessageException if MutableContent is not a
 	 *         boolean.
 	 */
 	public function setMutableContent($bMutableContent = true)
 	{
 		if (!is_bool($bMutableContent)) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"Invalid mutable-content value '{$bMutableContent}'"
 			);
 		}
@@ -337,15 +341,15 @@ class ApnsPHP_Message
 	/**
 	 * Set a custom property.
 	 *
-	 * @param  $sName @type string Custom property name.
-	 * @param  $mValue @type mixed Custom property value.
-	 * @throws ApnsPHP_Message_Exception if custom property name is not outside
+	 * @param  $sName @type string CustomMessage property name.
+	 * @param  $mValue @type mixed CustomMessage property value.
+	 * @throws MessageException if custom property name is not outside
 	 *         the Apple-reserved 'aps' namespace.
 	 */
 	public function setCustomProperty($sName, $mValue)
 	{
 		if (trim($sName) == self::APPLE_RESERVED_NAMESPACE) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"Property name '" . self::APPLE_RESERVED_NAMESPACE . "' can not be used for custom property."
 			);
 		}
@@ -400,15 +404,15 @@ class ApnsPHP_Message
 	/**
 	 * Get the custom property value.
 	 *
-	 * @param  $sName @type string Custom property name.
-	 * @throws ApnsPHP_Message_Exception if no property exists with the specified
+	 * @param  $sName @type string CustomMessage property name.
+	 * @throws MessageException if no property exists with the specified
 	 *         name.
 	 * @return @type string The custom property value.
 	 */
 	public function getCustomProperty($sName)
 	{
 		if (!array_key_exists($sName, $this->_aCustomProperties)) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"No property exists with the specified name '{$sName}'."
 			);
 		}
@@ -446,7 +450,7 @@ class ApnsPHP_Message
 	{
 		try {
 			$sJSONPayload = $this->getPayload();
-		} catch (ApnsPHP_Message_Exception $e) {
+		} catch (MessageException $e) {
 			$sJSONPayload = '';
 		}
 		return $sJSONPayload;
@@ -504,7 +508,7 @@ class ApnsPHP_Message
 	/**
 	 * Convert the message in a JSON-encoded payload.
 	 *
-	 * @throws ApnsPHP_Message_Exception if payload is longer than maximum allowed
+	 * @throws MessageException if payload is longer than maximum allowed
 	 *         size and AutoAdjustLongPayload is disabled.
 	 * @return @type string JSON-encoded payload.
 	 */
@@ -532,13 +536,13 @@ class ApnsPHP_Message
 					while (strlen($this->_sText = mb_substr($this->_sText, 0, --$nTextLen, 'UTF-8')) > $nMaxTextLen);
 					return $this->getPayload();
 				} else {
-					throw new ApnsPHP_Message_Exception(
+					throw new MessageException(
 						"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
 						self::PAYLOAD_MAXIMUM_SIZE . " bytes. The message text can not be auto-adjusted."
 					);
 				}
 			} else {
-				throw new ApnsPHP_Message_Exception(
+				throw new MessageException(
 					"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
 					self::PAYLOAD_MAXIMUM_SIZE . " bytes"
 				);
@@ -557,7 +561,7 @@ class ApnsPHP_Message
 	public function setExpiry($nExpiryValue)
 	{
 		if (!is_int($nExpiryValue)) {
-			throw new ApnsPHP_Message_Exception(
+			throw new MessageException(
 				"Invalid seconds number '{$nExpiryValue}'"
 			);
 		}
@@ -589,7 +593,7 @@ class ApnsPHP_Message
 	public function setCustomIdentifier($mCustomIdentifier)
 	{
 	    if (!preg_match('~[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}~i', $mCustomIdentifier)) {
-	        throw new ApnsPHP_Message_Exception('Identifier must be a UUID');
+	        throw new MessageException('Identifier must be a UUID');
         }
 		$this->_mCustomIdentifier = $mCustomIdentifier;
 	}
@@ -633,7 +637,7 @@ class ApnsPHP_Message
 	public function setPriority($iPriority)
 	{
 	    if (!in_array($iPriority, [5, 10])) {
-	        throw new ApnsPHP_Message_Exception('Invalid priority');
+	        throw new MessageException('Invalid priority');
         }
 
 		$this->_iPriority = $iPriority;
