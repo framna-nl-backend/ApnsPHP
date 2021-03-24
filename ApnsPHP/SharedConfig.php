@@ -29,6 +29,7 @@
 
 namespace ApnsPHP;
 
+use DateTimeImmutable;
 use ApnsPHP\Log\EmbeddedLogger;
 use Psr\Log\LoggerInterface;
 use Lcobucci\JWT\Signer\Key;

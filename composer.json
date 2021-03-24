@@ -12,6 +12,6 @@
 		"lcobucci/jwt": "^3.4.3"
 	},
 	"autoload": {
-        "psr-0": {"ApnsPHP_": ""}
+        "psr-4": {"ApnsPHP\\": "ApnsPHP"}
     }
 }
