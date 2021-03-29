@@ -488,14 +488,7 @@ abstract class SharedConfig
 
         if (strpos($this->providerCertFile, '.p8') !== false) {
             $this->logger()->info("Initializing HTTP/2 backend with key.");
-            $key   = new Key\LocalFileReference('file://' . $this->providerCertFile);
-            $token = Configuration::forUnsecuredSigner()->builder()
-                                                        ->issuedBy($this->providerTeamId)
-                                                        ->issuedAt(new DateTimeImmutable())
-                                                        ->withHeader('kid', $this->providerKeyId)
-                                                        ->getToken(new Sha256(), $key);
-
-            $this->providerToken = (string) $token;
+            $this->providerToken = $this->getJsonWebToken();
         }
 
         if (!curl_setopt_array($this->hSocket, $curlOpts)) {
@@ -507,6 +500,19 @@ abstract class SharedConfig
         $this->logger()->info("Initialized HTTP/2 backend.");
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getJsonWebToken()
+    {
+        $key = new Key\LocalFileReference('file://' . $this->providerCertFile);
+        return (string) Configuration::forUnsecuredSigner()->builder()
+            ->issuedBy($this->providerTeamId)
+            ->issuedAt(new DateTimeImmutable())
+            ->withHeader('kid', $this->providerKeyId)
+            ->getToken(new Sha256(), $key);
     }
 
     /**
