@@ -221,7 +221,7 @@ class Push extends SharedConfig
                         $errorMessage = array(
                             'identifier' => $key,
                             'statusCode' => curl_getinfo($this->hSocket, CURLINFO_HTTP_CODE),
-                            'statusMessage' => $reply
+                            'statusMessage' => str_replace("\0", '', $reply)
                         );
                     }
                 } else {
