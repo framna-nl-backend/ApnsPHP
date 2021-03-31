@@ -13,7 +13,6 @@ A **full set** of *open source* PHP classes to interact with the **Apple Push No
 - [Sample PHP Push code](sample_push.php)
 - [Sample PHP Feedback code](sample_feedback.php)
 - [Sample PHP Server code](sample_server.php)
-- [Sample Objective-C device code](Objective-C%20Demo/)
 - [Full APIs Documentation](http://immobiliare.github.io/ApnsPHP/html/index.html)
 - [How to generate a Push Notification certificate and download the Entrust Root Authority certificate](Doc/CertificateCreation.md)
 
