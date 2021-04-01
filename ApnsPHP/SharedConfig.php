@@ -29,7 +29,7 @@ namespace ApnsPHP;
 use DateTimeImmutable;
 use ApnsPHP\Log\EmbeddedLogger;
 use Psr\Log\LoggerInterface;
-use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use Lcobucci\JWT\Signer\Ecdsa\Sha256;
 use Lcobucci\JWT\Configuration;
 
@@ -498,12 +498,13 @@ abstract class SharedConfig
      */
     protected function getJsonWebToken()
     {
-        $key = new Key\LocalFileReference('file://' . $this->providerCertFile);
-        return (string) Configuration::forUnsecuredSigner()->builder()
+        $key = LocalFileReference::file($this->providerCertFile);
+        return Configuration::forUnsecuredSigner()->builder()
             ->issuedBy($this->providerTeamId)
             ->issuedAt(new DateTimeImmutable())
             ->withHeader('kid', $this->providerKeyId)
-            ->getToken(new Sha256(), $key);
+            ->getToken(Sha256::create(), $key)
+            ->toString();
     }
 
     /**

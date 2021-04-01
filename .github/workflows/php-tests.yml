@@ -8,7 +8,7 @@ jobs:
     name: "PHP-${{ matrix.php-versions }}: CS/PHPStan/Sample"
     strategy:
       matrix:
-        php-versions: ['7.2', '7.3', '7.4']
+        php-versions: ['7.4']
         experimental: [false]
         include:
           - php-versions: 8.0
