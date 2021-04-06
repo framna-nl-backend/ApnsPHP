@@ -129,8 +129,12 @@ abstract class SharedConfig
      * @throws BaseException if the environment is not
      *         sandbox or production or the provider certificate file is not readable.
      */
-    public function __construct($environment, $providerCertificateFile, $protocol = self::PROTOCOL_BINARY)
+    public function __construct($environment, $providerCertificateFile, $protocol = self::PROTOCOL_HTTP)
     {
+        if ($protocol === self::PROTOCOL_BINARY) {
+            @trigger_error('Binary protocol is deprecated and will be removed in the next version', E_USER_DEPRECATED);
+        }
+
         if ($environment != self::ENVIRONMENT_PRODUCTION && $environment != self::ENVIRONMENT_SANDBOX) {
             throw new BaseException(
                 "Invalid environment '{$environment}'"
