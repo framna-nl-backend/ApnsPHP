@@ -20,7 +20,7 @@
 
 namespace ApnsPHP;
 
-use ApnsPHP\Push\PushException;
+use ApnsPHP\Push\Exception;
 
 /**
  * The Push Notification Provider.
@@ -145,20 +145,17 @@ class Push extends SharedConfig
 
     /**
      * Sends all messages in the message queue to Apple Push Notification Service.
-     *
-     * @throws PushException if not connected to the
-     *         service or no notification queued.
      */
     public function send()
     {
         if (!$this->hSocket) {
-            throw new PushException(
+            throw new Exception(
                 'Not connected to Push Notification Service'
             );
         }
 
         if (empty($this->messageQueue)) {
-            throw new PushException(
+            throw new Exception(
                 'No notifications queued to be sent'
             );
         }
@@ -486,18 +483,16 @@ class Push extends SharedConfig
      *
      * @param  $messageId @type integer The Message ID.
      * @param  $error @type boolean @optional Insert the message in the Error container.
-     * @throws PushException if the Message ID is not valid or message
-     *         does not exists.
      */
     protected function removeMessageFromQueue($messageId, $error = false)
     {
         if (!is_numeric($messageId) || $messageId <= 0) {
-            throw new PushException(
+            throw new Exception(
                 'Message ID format is not valid.'
             );
         }
         if (!isset($this->messageQueue[$messageId])) {
-            throw new PushException(
+            throw new Exception(
                 "The Message ID {$messageId} does not exists."
             );
         }

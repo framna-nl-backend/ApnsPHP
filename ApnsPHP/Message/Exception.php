@@ -2,7 +2,7 @@
 
 /**
  * @file
- * ServerException class definition.
+ * Exception class definition.
  *
  * LICENSE
  *
@@ -18,13 +18,13 @@
  * @version $Id$
  */
 
-namespace ApnsPHP\Push\Server;
+namespace ApnsPHP\Message;
 
-use ApnsPHP\Push\PushException;
+use ApnsPHP\Exception as ApnsPHPException;
 
 /**
  * Exception class.
  */
-class ServerException extends PushException
+class Exception extends ApnsPHPException
 {
 }

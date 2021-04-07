@@ -126,27 +126,25 @@ abstract class SharedConfig
      * @param  $providerCertificateFile @type string Provider certificate file
      *         with key (Bundled PEM).
      * @param  $protocol @type integer Protocol.
-     * @throws BaseException if the environment is not
-     *         sandbox or production or the provider certificate file is not readable.
      */
     public function __construct($environment, $providerCertificateFile, $protocol = self::PROTOCOL_BINARY)
     {
         if ($environment != self::ENVIRONMENT_PRODUCTION && $environment != self::ENVIRONMENT_SANDBOX) {
-            throw new BaseException(
+            throw new Exception(
                 "Invalid environment '{$environment}'"
             );
         }
         $this->environment = $environment;
 
         if (!is_readable($providerCertificateFile)) {
-            throw new BaseException(
+            throw new Exception(
                 "Unable to read certificate file '{$providerCertificateFile}'"
             );
         }
         $this->providerCertFile = $providerCertificateFile;
 
         if ($protocol != self::PROTOCOL_BINARY && $protocol != self::PROTOCOL_HTTP) {
-            throw new BaseException(
+            throw new Exception(
                 "Invalid protocol '{$protocol}'"
             );
         }
@@ -169,8 +167,6 @@ abstract class SharedConfig
      * and use setLogger, otherwise standard logger will be used.
      *
      * @param  $logger @type LoggerInterface Logger instance.
-     * @throws BaseException if Logger is not an instance
-     *         of LoggerInterface.
      * @see Psr\Log\LoggerInterface
      * @see EmbeddedLogger
      *
@@ -178,12 +174,12 @@ abstract class SharedConfig
     public function setLogger(LoggerInterface $logger)
     {
         if (!is_object($logger)) {
-            throw new BaseException(
+            throw new Exception(
                 "The logger should be an instance of 'Psr\Log\LoggerInterface'"
             );
         }
         if (!($logger instanceof LoggerInterface)) {
-            throw new BaseException(
+            throw new Exception(
                 "Unable to use an instance of '" . get_class($logger) . "' as logger: " .
                 "a logger must implements 'Psr\Log\LoggerInterface'."
             );
@@ -244,13 +240,11 @@ abstract class SharedConfig
      *
      * @param  $rootCertificationAuthorityFile @type string Root Certification
      *         Authority file.
-     * @throws BaseException if Root Certification Authority
-     *         file is not readable.
      */
     public function setRootCertificationAuthority($rootCertificationAuthorityFile)
     {
         if (!is_readable($rootCertificationAuthorityFile)) {
-            throw new BaseException(
+            throw new Exception(
                 "Unable to read Certificate Authority file '{$rootCertificationAuthorityFile}'"
             );
         }
@@ -400,8 +394,6 @@ abstract class SharedConfig
      * Retries ConnectRetryTimes if unable to connect and waits setConnectRetryInterval
      * between each attempts.
      *
-     * @throws BaseException if is unable to connect after
-     *         ConnectRetryTimes.
      * @see setConnectRetryInterval
      * @see setConnectRetryTimes
      */
@@ -413,7 +405,7 @@ abstract class SharedConfig
             try {
                 $connected = $this->protocol === self::PROTOCOL_HTTP ?
                     $this->httpInit() : $this->binaryConnect($this->serviceURLs[$this->environment]);
-            } catch (BaseException $e) {
+            } catch (Exception $e) {
                 $this->logger()->error($e->getMessage());
                 if ($retry >= $this->connectRetryTimes) {
                     throw $e;
@@ -453,7 +445,6 @@ abstract class SharedConfig
      * service server via HTTP/2 API protocol.
      *
      * @return @type boolean True if successful initialized.
-     * @throws BaseException if is unable to initialize.
      */
     protected function httpInit()
     {
@@ -461,7 +452,7 @@ abstract class SharedConfig
 
         $this->hSocket = curl_init();
         if (!$this->hSocket) {
-            throw new BaseException(
+            throw new Exception(
                 "Unable to initialize HTTP/2 backend."
             );
         }
@@ -492,7 +483,7 @@ abstract class SharedConfig
         }
 
         if (!curl_setopt_array($this->hSocket, $curlOpts)) {
-            throw new BaseException(
+            throw new Exception(
                 "Unable to initialize HTTP/2 backend."
             );
         }
@@ -519,7 +510,6 @@ abstract class SharedConfig
      * Connects to Apple Push Notification service server via binary protocol.
      *
      * @return @type boolean True if successful connected.
-     * @throws BaseException if is unable to connect.
      */
     protected function binaryConnect($URL)
     {
@@ -556,7 +546,7 @@ abstract class SharedConfig
         );
 
         if (!$this->hSocket) {
-            throw new BaseException(
+            throw new Exception(
                 "Unable to connect to '{$URL}': {$errorMessage} ({$errorCode})"
             );
         }

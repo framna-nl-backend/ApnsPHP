@@ -20,10 +20,10 @@
 
 namespace ApnsPHP\Push;
 
-use ApnsPHP\BaseException;
+use ApnsPHP\Exception;
 use ApnsPHP\Message;
 use ApnsPHP\Push;
-use ApnsPHP\Push\Server\ServerException;
+use ApnsPHP\Push\Server\Exception as ServerException;
 
 /**
  * The Push Notification Server Provider.
@@ -74,8 +74,6 @@ class Server extends Push
      * @param  $environment @type integer Environment.
      * @param  $providerCertificateFile @type string Provider certificate file
      *         with key (Bundled PEM).
-     * @throws ServerException if is unable to
-     *         get Shared Memory Segment or Semaphore ID.
      */
     public function __construct($environment, $providerCertificateFile)
     {
@@ -208,7 +206,7 @@ class Server extends Push
                 // Child process
                 try {
                     parent::connect();
-                } catch (BaseException $e) {
+                } catch (Exception $e) {
                     $this->logger()->error($e->getMessage() . ', exiting...');
                     exit(1);
                 }

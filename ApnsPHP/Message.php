@@ -20,7 +20,7 @@
 
 namespace ApnsPHP;
 
-use ApnsPHP\Message\MessageException;
+use ApnsPHP\Message\Exception;
 
 /**
  * The Push Notification Message.
@@ -104,13 +104,11 @@ class Message
      * Add a recipient device token.
      *
      * @param  $deviceToken @type string Recipients device token.
-     * @throws MessageException if the device token
-     *         is not well formed.
      */
     public function addRecipient($deviceToken)
     {
         if (!preg_match('~^[a-f0-9]{64,}$~i', $deviceToken)) {
-            throw new MessageException(
+            throw new Exception(
                 "Invalid device token '{$deviceToken}'"
             );
         }
@@ -122,13 +120,11 @@ class Message
      *
      * @param  $recipient @type integer @optional Recipient number to return.
      * @return @type string The recipient token at index $recipient.
-     * @throws MessageException if no recipient number
-     *         exists.
      */
     public function getRecipient($recipient = 0)
     {
         if (!isset($this->deviceTokens[$recipient])) {
-            throw new MessageException(
+            throw new Exception(
                 "No recipient at index '{$recipient}'"
             );
         }
@@ -140,13 +136,11 @@ class Message
      *
      * @param  $recipient @type integer @optional Recipient number to return.
      * @return Message The message configured with the token at index $recipient.
-     * @throws MessageException if no recipient number
-     *         exists.
      */
     public function selfForRecipient($recipient = 0)
     {
         if (!isset($this->deviceTokens[$recipient])) {
-            throw new MessageException(
+            throw new Exception(
                 "No recipient at index '{$recipient}'"
             );
         }
@@ -223,13 +217,11 @@ class Message
      * Set the number to badge the application icon with.
      *
      * @param  $badge @type integer A number to badge the application icon with.
-     * @throws MessageException if badge is not an
-     *         integer.
      */
     public function setBadge($badge)
     {
         if (!is_int($badge)) {
-            throw new MessageException(
+            throw new Exception(
                 "Invalid badge number '{$badge}'"
             );
         }
@@ -312,13 +304,11 @@ class Message
      * @see http://tinyurl.com/ApplePushNotificationNewsstand
      *
      * @param  $contentAvailable @type boolean True to initiates the Newsstand background download.
-     * @throws MessageException if ContentAvailable is not a
-     *         boolean.
      */
     public function setContentAvailable($contentAvailable = true)
     {
         if (!is_bool($contentAvailable)) {
-            throw new MessageException(
+            throw new Exception(
                 "Invalid content-available value '{$contentAvailable}'"
             );
         }
@@ -340,13 +330,11 @@ class Message
      * @see https://developer.apple.com/reference/usernotifications/unnotificationserviceextension
      *
      * @param  $mutableContent @type boolean True to enable flag
-     * @throws MessageException if MutableContent is not a
-     *         boolean.
      */
     public function setMutableContent($mutableContent = true)
     {
         if (!is_bool($mutableContent)) {
-            throw new MessageException(
+            throw new Exception(
                 "Invalid mutable-content value '{$mutableContent}'"
             );
         }
@@ -368,13 +356,11 @@ class Message
      *
      * @param  $name @type string Custom property name.
      * @param  $value @type mixed Custom property value.
-     * @throws MessageException if custom property name is not outside
-     *         the Apple-reserved 'aps' namespace.
      */
     public function setCustomProperty($name, $value)
     {
         if (trim($name) == self::APPLE_RESERVED_NAMESPACE) {
-            throw new MessageException(
+            throw new Exception(
                 "Property name '" . self::APPLE_RESERVED_NAMESPACE . "' can not be used for custom property."
             );
         }
@@ -431,13 +417,11 @@ class Message
      *
      * @param  $name @type string Custom property name.
      * @return @type string The custom property value.
-     * @throws MessageException if no property exists with the specified
-     *         name.
      */
     public function getCustomProperty($name)
     {
         if (!array_key_exists($name, $this->customProperties)) {
-            throw new MessageException(
+            throw new Exception(
                 "No property exists with the specified name '{$name}'."
             );
         }
@@ -475,7 +459,7 @@ class Message
     {
         try {
             $JSONPayload = $this->getPayload();
-        } catch (MessageException $e) {
+        } catch (Exception $e) {
             $JSONPayload = '';
         }
         return $JSONPayload;
@@ -536,8 +520,6 @@ class Message
      * Convert the message in a JSON-encoded payload.
      *
      * @return @type string JSON-encoded payload.
-     * @throws MessageException if payload is longer than maximum allowed
-     *         size and AutoAdjustLongPayload is disabled.
      */
     public function getPayload()
     {
@@ -570,13 +552,13 @@ class Message
                     while (strlen($this->text = mb_substr($this->text, 0, --$nTextLen, 'UTF-8')) > $maxTextLength);
                     return $this->getPayload();
                 } else {
-                    throw new MessageException(
+                    throw new Exception(
                         "JSON Payload is too long: {$JSONPayloadLength} bytes. Maximum size is " .
                         self::PAYLOAD_MAXIMUM_SIZE . " bytes. The message text can not be auto-adjusted."
                     );
                 }
             } else {
-                throw new MessageException(
+                throw new Exception(
                     "JSON Payload is too long: {$JSONPayloadLength} bytes. Maximum size is " .
                     self::PAYLOAD_MAXIMUM_SIZE . " bytes"
                 );
@@ -595,7 +577,7 @@ class Message
     public function setExpiry($expiryValue)
     {
         if (!is_int($expiryValue)) {
-            throw new MessageException(
+            throw new Exception(
                 "Invalid seconds number '{$expiryValue}'"
             );
         }
@@ -627,7 +609,7 @@ class Message
     public function setCustomIdentifier($customIdentifier)
     {
         if (!preg_match('~[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}~i', $customIdentifier)) {
-            throw new MessageException('Identifier must be a UUID');
+            throw new Exception('Identifier must be a UUID');
         }
         $this->customIdentifier = $customIdentifier;
     }
@@ -671,7 +653,7 @@ class Message
     public function setPriority($priority)
     {
         if (!in_array($priority, [5, 10])) {
-            throw new MessageException('Invalid priority');
+            throw new Exception('Invalid priority');
         }
 
         $this->priority = $priority;
