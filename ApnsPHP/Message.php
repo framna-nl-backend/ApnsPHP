@@ -519,7 +519,7 @@ class Message
     /**
      * Convert the message in a JSON-encoded payload.
      *
-     * @return @type string JSON-encoded payload.
+     * @return string JSON-encoded payload.
      */
     public function getPayload()
     {
@@ -528,14 +528,9 @@ class Message
             defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0
         );
         if (!defined('JSON_UNESCAPED_UNICODE') && function_exists('mb_convert_encoding')) {
-            $JSON = preg_replace_callback(
-                '~\\\\u([0-9a-f]{4})~i',
-                create_function(
-                    '$aMatches',
-                    'return mb_convert_encoding(pack("H*", $aMatches[1]), "UTF-8", "UTF-16");'
-                ),
-                $JSON
-            );
+            $JSON = preg_replace_callback('~\\\\u([0-9a-f]{4})~i', function ($matches) {
+                return mb_convert_encoding(pack("H*", $matches[1]), "UTF-8", "UTF-16");
+            }, $JSON);
         }
 
         $JSONPayload = str_replace(
