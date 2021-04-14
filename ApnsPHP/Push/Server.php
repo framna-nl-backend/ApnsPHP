@@ -240,14 +240,26 @@ class Server extends Push
     }
 
     /**
+     * Legacy alias for getMessageQueue()
+     *
+     * @see getMessageQueue()
+     * @deprecated remove in 3.0
+     */
+    public function getQueue($empty = true)
+    {
+        $this->logger()->warning('getQueue() is deprecated, use getMessageQueue() instead.');
+        return $this->getMessageQueue($empty);
+    }
+
+    /**
      * Returns messages in the message queue.
      *
      * When a message is successful sent or reached the maximum retry time is removed
      * from the message queue and inserted in the Errors container. Use the getErrors()
      * method to retrive messages with delivery error(s).
      *
-     * @param  $empty @type boolean @optional Empty message queue.
-     * @return @type array Array of messages left on the queue.
+     * @param bool $empty Empty message queue.
+     * @return array Array of messages left on the queue.
      */
     public function getMessageQueue($empty = true)
     {

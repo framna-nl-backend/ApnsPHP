@@ -200,10 +200,9 @@ abstract class SharedConfig
     /**
      * Set the Provider Certificate passphrase.
      *
-     * @param  $providerCertPassphrase @type string Provider Certificate
-     *         passphrase.
+     * @param string $providerCertPassphrase Provider Certificate passphrase.
      */
-    public function setProviderCertPassphrase($providerCertPassphrase)
+    public function setProviderCertificatePassphrase($providerCertPassphrase)
     {
         $this->providerCertPassphrase = $providerCertPassphrase;
     }
@@ -211,7 +210,7 @@ abstract class SharedConfig
     /**
      * Set the Team Identifier.
      *
-     * @param  string $teamId Apple Team Identifier.
+     * @param string $teamId Apple Team Identifier.
      */
     public function setTeamId($teamId)
     {
@@ -221,7 +220,7 @@ abstract class SharedConfig
     /**
      * Set the Key Identifier.
      *
-     * @param  string $keyId Apple Key Identifier.
+     * @param string $keyId Apple Key Identifier.
      */
     public function setKeyId($keyId)
     {
