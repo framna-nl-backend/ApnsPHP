@@ -22,9 +22,15 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           tools: cs2pr, phpcs, phpstan
+          extensions: uopz
+          ini-values: pcov.directory=ApnsPHP
+          coverage: pcov
 
       - name: Setup problem matchers for PHP
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Run PHPCS
         continue-on-error: false
@@ -43,3 +49,6 @@ jobs:
 
       - name: Run sample
         run: php sample_push.php | grep "Trying tls://gateway.sandbox.push.apple.com:2195"
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit -c phpunit.xml

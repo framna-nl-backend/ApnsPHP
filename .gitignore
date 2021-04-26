@@ -22,3 +22,5 @@ Doc/Reference/html
 # Composer
 composer.lock
 vendor
+# ignore test results
+logs
