@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="vendor/autoload.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         forceCoversAnnotation="true"
+         colors="true"
+         verbose="true">
+
+    <testsuites>
+        <testsuite name="Message">
+            <file>ApnsPHP/Message/Tests/SafariMessageTest.php</file>
+            <file>ApnsPHP/Message/Tests/SafariMessageGetPayloadDictionaryTest.php</file>
+        </testsuite>
+    </testsuites>
+
+    <logging>
+        <junit outputFile="logs/junit.xml"/>
+    </logging>
+
+    <coverage>
+        <include>
+            <directory>ApnsPHP/</directory>
+        </include>
+
+        <exclude>
+            <directory>ApnsPHP/Tests</directory>
+            <directory>ApnsPHP/Message/Tests</directory>
+        </exclude>
+
+        <report>
+            <clover outputFile="logs/clover.xml"/>
+            <html outputDirectory="logs/coverage" lowUpperBound="35" highLowerBound="70"/>
+        </report>
+    </coverage>
+</phpunit>
