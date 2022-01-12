@@ -427,7 +427,7 @@ abstract class SharedConfig
     /**
      * Disconnects from Apple Push Notifications service server.
      *
-     * @return boolean True if successful disconnected.
+     * @return bool True if successful disconnected.
      */
     public function disconnect()
     {
@@ -435,7 +435,9 @@ abstract class SharedConfig
             $this->logger()->info('Disconnected.');
             if ($this->protocol === self::PROTOCOL_HTTP) {
                 curl_close($this->hSocket);
-                unset($this->hSocket); // curl_close($handle) has not effect with PHP 8
+                if ($this->hSocket instanceof \CurlHandle) {
+                    unset($this->hSocket); // curl_close($handle) has not effect with PHP 8
+                }
                 return true;
             } else {
                 return fclose($this->hSocket);
