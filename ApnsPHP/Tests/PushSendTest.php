@@ -16,7 +16,6 @@ namespace ApnsPHP\Tests;
  */
 class PushSendTest extends PushTest
 {
-
     /**
      * Test that send() throws an exception if there is no connection to the push notification service
      *

@@ -16,7 +16,6 @@ namespace ApnsPHP\Tests;
  */
 class PushUpdateQueueTest extends PushTest
 {
-
     /**
      * Test that updateQueue() returns false if there is no errorMessage
      *

@@ -16,7 +16,6 @@ namespace ApnsPHP\Tests;
  */
 class PushRemoveMessageFromQueueTest extends PushTest
 {
-
     /**
      * Test that removeMessageFromQueue() throws an exception if the message id is not valid
      *

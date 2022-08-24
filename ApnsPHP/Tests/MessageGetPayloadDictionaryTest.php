@@ -16,7 +16,6 @@ namespace ApnsPHP\Tests;
  */
 class MessageGetPayloadDictionaryTest extends MessageTest
 {
-
     /**
      * Test that getPayloadDictionary returns complete payload
      *

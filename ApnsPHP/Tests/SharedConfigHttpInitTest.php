@@ -18,7 +18,6 @@ use ApnsPHP\Exception;
  */
 class SharedConfigHttpInitTest extends SharedConfigTest
 {
-
     /**
      * Test that httpInit() succeeds with certificate
      *

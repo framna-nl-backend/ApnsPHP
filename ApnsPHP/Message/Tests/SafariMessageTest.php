@@ -21,7 +21,6 @@ use ReflectionClass;
  */
 abstract class SafariMessageTest extends LunrBaseTest
 {
-
     /**
      * TestCase constructor
      */

@@ -20,7 +20,6 @@ use ReflectionClass;
  */
 abstract class PushTest extends LunrBaseTest
 {
-
     /**
      * Mock instance of the EmbeddedLogger class.
      * @var \ApnsPHP\Log\EmbeddedLogger

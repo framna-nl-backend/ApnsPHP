@@ -22,7 +22,6 @@ use ReflectionClass;
  */
 abstract class MessageTest extends LunrBaseTest
 {
-
     /**
      * TestCase constructor
      */

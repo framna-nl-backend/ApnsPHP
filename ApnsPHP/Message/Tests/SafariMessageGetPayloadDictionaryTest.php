@@ -16,7 +16,6 @@ namespace ApnsPHP\Message\Tests;
  */
 class SafariMessageGetPayloadDictionaryTest extends SafariMessageTest
 {
-
     /**
      * Test that getPayloadDictionary returns complete payload
      *

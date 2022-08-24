@@ -18,7 +18,6 @@ use ApnsPHP\Exception;
  */
 class SharedConfigConnectTest extends SharedConfigTest
 {
-
     /**
      * Test that connect() connects successfully
      *

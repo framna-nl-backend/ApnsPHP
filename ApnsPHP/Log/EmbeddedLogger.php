@@ -33,7 +33,6 @@ use Psr\Log\AbstractLogger;
  */
 class EmbeddedLogger extends AbstractLogger implements \Psr\Log\LoggerInterface
 {
-
     /**
      * Logs with an arbitrary level.
      *

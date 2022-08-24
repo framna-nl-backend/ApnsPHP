@@ -16,7 +16,6 @@ namespace ApnsPHP\Tests;
  */
 class PushHttpSendTest extends PushTest
 {
-
     /**
      * Helper function to set the http headers and verify calls to message getters
      * These calls happen when HttpSend is called and can be the same every time
