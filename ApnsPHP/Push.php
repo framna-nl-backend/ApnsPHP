@@ -638,6 +638,12 @@ class Push
             CURLOPT_POSTFIELDS => $message->getPayload()
             ]) && ($reply = curl_exec($this->hSocket)) !== false)
         ) {
+            $errorCode = curl_errno($this->hSocket);
+
+            if ($errorCode > 0) {
+                $reply = sprintf('Response: %s; Error code: %d; Error message: %s.', $reply, $errorCode, curl_error($this->hSocket));
+            }
+
             return false;
         }
 
