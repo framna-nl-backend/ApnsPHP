@@ -641,7 +641,7 @@ class Push
             $errorCode = curl_errno($this->hSocket);
 
             if ($errorCode > 0) {
-                $reply = sprintf('Response: %s; Error code: %d; Error message: %s.', $reply, $errorCode, curl_error($this->hSocket));
+                $this->logger->error(sprintf('HTTP request error code: %d; message: %s.', $errorCode, curl_error($this->hSocket)));
             }
 
             return false;
