@@ -69,6 +69,12 @@ class PushSendTest extends PushTest
         $this->mock_function('curl_init', function () {
             return new stdClass();
         });
+        $this->mock_function('curl_errno', function () {
+            return 0;
+        });
+        $this->mock_function('curl_error', function () {
+            return '';
+        });
 
         $error = [
             'command' => 8,
@@ -205,6 +211,12 @@ class PushSendTest extends PushTest
         });
         $this->mock_function('curl_close', function () {
             return null;
+        });
+        $this->mock_function('curl_errno', function () {
+            return 0;
+        });
+        $this->mock_function('curl_error', function () {
+            return '';
         });
         $this->mock_function('curl_init', function () {
             return new stdClass();
