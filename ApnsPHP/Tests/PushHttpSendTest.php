@@ -104,7 +104,7 @@ class PushHttpSendTest extends PushTest
         });
 
         $this->mock_function('curl_error', function () {
-            return 'OpenSSL SSL_read: error:14094415:SSL routines:ssl3_read_bytes:sslv3 alert certificate expired, errno 0';
+            return 'OpenSSL SSL_read: error:14094415:SSL routines:ssl3_read_bytes:sslv3 alert certificate expired';
         });
 
         $this->set_reflection_property_value('environment', 1);
