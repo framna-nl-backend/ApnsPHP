@@ -13,7 +13,7 @@
 		"lib-curl": ">=7.33.0",
 		"lib-openssl": "*",
 		"psr/log": ">=1.1",
-		"lcobucci/jwt": "~4.1.5"
+		"lcobucci/jwt": "^4.1.5"
 	},
 	"require-dev": {
 		"phpunit/phpunit": ">=9.0 <9.6",
