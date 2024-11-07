@@ -56,42 +56,6 @@ jobs:
       - name: Run PHPUnit
         run: phpunit -c phpunit.xml
 
-  sample_push:
-    runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
-    name: "PHP-${{ matrix.php-versions }}: Sample"
-    strategy:
-      matrix:
-        php-versions: ['8.1', '8.2', '8.3']
-        experimental: [false]
-        include:
-          - php-versions: 8.4
-            experimental: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          coverage: none
-          extensions: uopz
-
-      - name: Setup problem matchers for PHP
-        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-
-      - name: Install dependencies
-        run: composer update
-
-      - name: Setup fake certificates
-        run: |
-          touch entrust_root_certification_authority.pem
-          touch server_certificates_bundle_sandbox.pem
-
-      - name: Run sample
-        run: php sample_push.php | grep "Trying to initialize HTTP/2 backend"
-
   phpcs:
     runs-on: ubuntu-latest
     continue-on-error: false

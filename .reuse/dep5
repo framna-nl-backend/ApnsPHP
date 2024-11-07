@@ -30,3 +30,7 @@ Copyright: 2015 Luca Bruno (luca.bruno@immobiliare.it)
            2021 M2mobi B.V., Amsterdam, The Netherlands
            2022 Move Agency Group B.V., Zwolle, The Netherlands
 License: CC0-1.0
+
+Files: doc/schemas/*.json
+Copyright: 2024 Move Agency Group B.V., Zwolle, The Netherlands
+License: CC0-1.0

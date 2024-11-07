@@ -1,0 +1,83 @@
+# SPDX-FileCopyrightText: Copyright 2024 Move Agency Group B.V., Zwolle, The Netherlands
+# SPDX-License-Identifier: CC0-1.0
+
+name: Integration Tests
+on: [push, pull_request]
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    name: "PHP-${{ matrix.php-versions }}: Integration"
+    strategy:
+      matrix:
+        php-versions: ['8.3']
+        experimental: [false]
+        include:
+          - php-versions: 8.4
+            experimental: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: uopz
+          tools: phpunit:9.5.x
+
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - name: Install dependencies
+        run: composer update
+
+      - name: Install JSONSchema
+        run: pipx install check-jsonschema
+
+      - name: Check payload
+        run: |
+          for type in "message"; do
+            echo "Generate:"
+            php ./get_payload.php "$type" | tee "payload.$type.json"
+
+            echo "\nValidate:"
+            check-jsonschema --schemafile "doc/schemas/$type.schema.json" "payload.$type.json"
+          done
+
+  sample_push:
+      runs-on: ubuntu-latest
+      continue-on-error: ${{ matrix.experimental }}
+      name: "PHP-${{ matrix.php-versions }}: Sample"
+      strategy:
+          matrix:
+              php-versions: ['8.1', '8.2', '8.3']
+              experimental: [false]
+              include:
+                  - php-versions: 8.4
+                    experimental: true
+      steps:
+          - name: Checkout
+            uses: actions/checkout@v3
+
+          - name: Setup PHP
+            uses: shivammathur/setup-php@v2
+            with:
+                php-version: ${{ matrix.php-versions }}
+                coverage: none
+                extensions: uopz
+
+          - name: Setup problem matchers for PHP
+            run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+          - name: Install dependencies
+            run: composer update
+
+          - name: Setup fake certificates
+            run: |
+                touch entrust_root_certification_authority.pem
+                touch server_certificates_bundle_sandbox.pem
+
+          - name: Run sample
+            run: php sample_push.php | grep "Trying to initialize HTTP/2 backend"

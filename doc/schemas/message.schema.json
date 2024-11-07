@@ -1,0 +1,53 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "APNS Push Message",
+    "description": "A Push message for APNS",
+    "type": "object",
+    "properties": {
+        "aps": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "alert": {
+                    "anyOf": [
+                        {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "title": {
+                                    "type": "string"
+                                },
+                                "body": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "badge": {
+                    "type": "number"
+                },
+                "sound": {
+                    "type": "string"
+                },
+                "content-available": {
+                    "type": "number"
+                },
+                "mutable-content": {
+                    "type": "number"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "thread-id": {
+                    "type": "string"
+                }
+            },
+            "required": ["alert"]
+        }
+    },
+    "required": ["aps"]
+}
