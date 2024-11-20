@@ -24,7 +24,7 @@ class PushUpdateQueueTest extends PushTest
      */
     public function testUpdateQueueReturnsFalse(): void
     {
-        $method = $this->get_accessible_reflection_method('updateQueue');
+        $method = $this->get_reflection_method('updateQueue');
         $result = $method->invoke($this->class);
 
         $this->assertFalse($result);
@@ -70,7 +70,7 @@ class PushUpdateQueueTest extends PushTest
                      ->method('error')
                      ->with('Unable to send message ID 3: Missing payload (4).');
 
-        $method = $this->get_accessible_reflection_method('updateQueue');
+        $method = $this->get_reflection_method('updateQueue');
         $result = $method->invokeArgs($this->class, [ $errorMessage ]);
 
         $messageQueue  = $this->get_reflection_property_value('messageQueue');
@@ -117,10 +117,10 @@ class PushUpdateQueueTest extends PushTest
                      ->method('error')
                      ->with('Unable to send message ID 2: Missing payload (4).');
 
-        $method = $this->get_accessible_reflection_method('updateQueue');
+        $method = $this->get_reflection_method('updateQueue');
         $result = $method->invoke($this->class, $errorMessage);
 
-        $messageQueue  = $this->get_accessible_reflection_property('messageQueue')->getValue($this->class);
+        $messageQueue  = $this->get_reflection_property('messageQueue')->getValue($this->class);
 
         $this->assertTrue($result);
         $this->assertEquals([ 3 => $queue[3], 4 => $queue[4] ], $messageQueue);

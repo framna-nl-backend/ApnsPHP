@@ -30,13 +30,19 @@ abstract class PushTest extends LunrBaseTest
      * Mock instance of a Logger class.
      * @var LoggerInterface&MockObject
      */
-    protected $logger;
+    protected LoggerInterface&MockObject $logger;
 
     /**
      * Mock instance of the Message class.
      * @var Message&MockObject
      */
-    protected $message;
+    protected Message&MockObject $message;
+
+    /**
+     * Class to test
+     * @var Push
+     */
+    protected Push $class;
 
     /**
      * TestCase constructor
@@ -55,7 +61,7 @@ abstract class PushTest extends LunrBaseTest
             $this->logger,
         );
 
-        $this->reflection = new ReflectionClass('ApnsPHP\Push');
+        $this->baseSetUp($this->class);
     }
 
     /**
@@ -64,8 +70,8 @@ abstract class PushTest extends LunrBaseTest
     public function tearDown(): void
     {
         unset($this->class);
-        unset($this->reflection);
         unset($this->logger);
         unset($this->message);
+        parent::tearDown();
     }
 }

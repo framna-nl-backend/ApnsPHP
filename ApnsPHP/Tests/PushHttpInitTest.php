@@ -42,7 +42,7 @@ class PushHttpInitTest extends PushTest
                      ->method('info')
                      ->withConsecutive(...$message);
 
-        $method = $this->get_accessible_reflection_method('httpInit');
+        $method = $this->get_reflection_method('httpInit');
         $result = $method->invoke($this->class);
 
         $this->assertTrue($result);
@@ -73,19 +73,9 @@ class PushHttpInitTest extends PushTest
             new Signature('signature', 'eSignature'),
         );
 
-        $this->mock_method(
-            [ 'Lcobucci\JWT\Signer\Key\InMemory', 'file' ],
-            function () use ($key) {
-                return $key;
-            }
-        );
+        $this->mock_method([ 'Lcobucci\JWT\Signer\Key\InMemory', 'file' ], fn() => $key);
 
-        $this->mock_method(
-            [ 'Lcobucci\JWT\Configuration', 'builder' ],
-            function () use ($builder) {
-                return $builder;
-            }
-        );
+        $this->mock_method([ 'Lcobucci\JWT\Configuration', 'builder' ], fn() => $builder);
 
         $builder->expects($this->once())
                 ->method('issuedBy')
@@ -115,7 +105,7 @@ class PushHttpInitTest extends PushTest
                          [ 'Initialized HTTP/2 backend.' ]
                      );
 
-        $method = $this->get_accessible_reflection_method('httpInit');
+        $method = $this->get_reflection_method('httpInit');
         $result = $method->invoke($this->class);
 
         $this->assertTrue($result);
@@ -136,9 +126,7 @@ class PushHttpInitTest extends PushTest
         $this->set_reflection_property_value('providerKeyId', 'TheKey');
         $this->set_reflection_property_value('logger', $this->logger);
 
-        $this->mock_function('curl_setopt_array', function () {
-            return false;
-        });
+        $this->mock_function('curl_setopt_array', fn() => false);
 
         $key = $this->getMockBuilder('Lcobucci\JWT\Signer\Key')
                     ->disableOriginalConstructor()
@@ -153,19 +141,9 @@ class PushHttpInitTest extends PushTest
             new Signature('signature', 'eSignature'),
         );
 
-        $this->mock_method(
-            [ 'Lcobucci\JWT\Signer\Key\InMemory', 'file' ],
-            function () use ($key) {
-                return $key;
-            }
-        );
+        $this->mock_method([ 'Lcobucci\JWT\Signer\Key\InMemory', 'file' ], fn() => $key);
 
-        $this->mock_method(
-            [ 'Lcobucci\JWT\Configuration', 'builder' ],
-            function () use ($builder) {
-                return $builder;
-            }
-        );
+        $this->mock_method([ 'Lcobucci\JWT\Configuration', 'builder' ], fn() => $builder);
 
         $builder->expects($this->once())
                 ->method('issuedBy')
@@ -197,7 +175,7 @@ class PushHttpInitTest extends PushTest
         $this->expectException('ApnsPHP\Exception');
         $this->expectExceptionMessage('Unable to initialize HTTP/2 backend.');
 
-        $method = $this->get_accessible_reflection_method('httpInit');
+        $method = $this->get_reflection_method('httpInit');
 
         # phpstan doesn't detect the potential throw through ReflectionMethod.
         # Verified that by making the method public and calling it directly

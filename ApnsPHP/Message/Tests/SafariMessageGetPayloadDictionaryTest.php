@@ -40,7 +40,7 @@ class SafariMessageGetPayloadDictionaryTest extends SafariMessageTest
             ]
         ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -54,7 +54,7 @@ class SafariMessageGetPayloadDictionaryTest extends SafariMessageTest
     {
         $payload = [ 'aps' => [ 'alert' => [] ] ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }

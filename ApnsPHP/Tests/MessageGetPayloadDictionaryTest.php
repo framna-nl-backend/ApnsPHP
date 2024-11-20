@@ -52,7 +52,7 @@ class MessageGetPayloadDictionaryTest extends MessageTest
             'name' => 'value'
         ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -88,7 +88,7 @@ class MessageGetPayloadDictionaryTest extends MessageTest
             'name' => 'value'
         ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -102,7 +102,7 @@ class MessageGetPayloadDictionaryTest extends MessageTest
     {
         $payload = [ 'aps' => [] ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }

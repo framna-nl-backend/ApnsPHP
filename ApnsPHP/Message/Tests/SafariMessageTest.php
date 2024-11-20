@@ -23,12 +23,18 @@ use ReflectionClass;
 abstract class SafariMessageTest extends LunrBaseTest
 {
     /**
+     * Class to test
+     * @var SafariMessage
+     */
+    protected SafariMessage $class;
+
+    /**
      * TestCase constructor
      */
     public function setUp(): void
     {
-        $this->reflection = new ReflectionClass('ApnsPHP\Message\SafariMessage');
         $this->class      = new SafariMessage();
+        $this->baseSetUp($this->class);
     }
 
     /**
@@ -37,6 +43,6 @@ abstract class SafariMessageTest extends LunrBaseTest
     public function tearDown(): void
     {
         unset($this->class);
-        unset($this->reflection);
+        parent::tearDown();
     }
 }

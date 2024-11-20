@@ -23,12 +23,18 @@ use ReflectionClass;
 abstract class CustomMessageTest extends LunrBaseTest
 {
     /**
+     * Class to test
+     * @var CustomMessage
+     */
+    protected CustomMessage $class;
+
+    /**
      * TestCase constructor
      */
     public function setUp(): void
     {
-        $this->reflection = new ReflectionClass('ApnsPHP\Message\CustomMessage');
         $this->class      = new CustomMessage();
+        $this->baseSetUp($this->class);
     }
 
     /**
@@ -37,6 +43,6 @@ abstract class CustomMessageTest extends LunrBaseTest
     public function tearDown(): void
     {
         unset($this->class);
-        unset($this->reflection);
+        parent::tearDown();
     }
 }

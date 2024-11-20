@@ -39,7 +39,7 @@ class PushAddTest extends PushTest
 
         $this->class->add($this->message);
 
-        $queue = $this->get_accessible_reflection_property('messageQueue')->getValue($this->class);
+        $queue = $this->get_reflection_property('messageQueue')->getValue($this->class);
 
         $this->assertEquals($this->message, $queue[1]['MESSAGE']);
     }
@@ -73,7 +73,7 @@ class PushAddTest extends PushTest
 
         $this->class->add($this->message);
 
-        $queue = $this->get_accessible_reflection_property('messageQueue')->getValue($this->class);
+        $queue = $this->get_reflection_property('messageQueue')->getValue($this->class);
 
         $this->assertEquals($messages, $queue);
     }
@@ -95,7 +95,7 @@ class PushAddTest extends PushTest
 
         $this->class->add($this->message);
 
-        $queue = $this->get_accessible_reflection_property('messageQueue')->getValue($this->class);
+        $queue = $this->get_reflection_property('messageQueue')->getValue($this->class);
 
         $this->assertArrayEmpty($queue);
     }

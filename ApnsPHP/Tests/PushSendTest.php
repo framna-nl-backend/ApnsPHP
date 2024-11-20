@@ -55,24 +55,12 @@ class PushSendTest extends PushTest
      */
     public function testSendFailsWithoutRetrying(): void
     {
-        $this->mock_function('curl_exec', function () {
-            return false;
-        });
-        $this->mock_function('curl_setopt_array', function () {
-            return true;
-        });
-        $this->mock_function('curl_getinfo', function () {
-            return 404;
-        });
-        $this->mock_function('curl_close', function () {
-            return null;
-        });
-        $this->mock_function('curl_errno', function () {
-            return 0;
-        });
-        $this->mock_function('curl_error', function () {
-            return '';
-        });
+        $this->mock_function('curl_exec', fn() => false);
+        $this->mock_function('curl_setopt_array', fn() => true);
+        $this->mock_function('curl_getinfo', fn() => 404);
+        $this->mock_function('curl_close', fn() => null);
+        $this->mock_function('curl_errno', fn() => 0);
+        $this->mock_function('curl_error', fn() => '');
 
         $error = [
             'command' => 8,
@@ -124,18 +112,10 @@ class PushSendTest extends PushTest
      */
     public function testSendFailsWithRetrying(): void
     {
-        $this->mock_function('curl_exec', function () {
-            return false;
-        });
-        $this->mock_function('curl_setopt_array', function () {
-            return true;
-        });
-        $this->mock_function('curl_getinfo', function () {
-            return 429;
-        });
-        $this->mock_function('curl_close', function () {
-            return null;
-        });
+        $this->mock_function('curl_exec', fn() => false);
+        $this->mock_function('curl_setopt_array', fn() => true);
+        $this->mock_function('curl_getinfo', fn() => 429);
+        $this->mock_function('curl_close', fn() => null);
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
@@ -193,24 +173,12 @@ class PushSendTest extends PushTest
      */
     public function testSendRemovesWhenNoError(): void
     {
-        $this->mock_function('curl_exec', function () {
-            return false;
-        });
-        $this->mock_function('curl_setopt_array', function () {
-            return true;
-        });
-        $this->mock_function('curl_getinfo', function () {
-            return 200;
-        });
-        $this->mock_function('curl_close', function () {
-            return null;
-        });
-        $this->mock_function('curl_errno', function () {
-            return 0;
-        });
-        $this->mock_function('curl_error', function () {
-            return '';
-        });
+        $this->mock_function('curl_exec', fn() => false);
+        $this->mock_function('curl_setopt_array', fn() => true);
+        $this->mock_function('curl_getinfo', fn() => 200);
+        $this->mock_function('curl_close', fn() => null);
+        $this->mock_function('curl_errno', fn() => 0);
+        $this->mock_function('curl_error', fn() => '');
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
@@ -255,18 +223,10 @@ class PushSendTest extends PushTest
      */
     public function testSendSuccessfullySends(): void
     {
-        $this->mock_function('curl_exec', function () {
-            return '';
-        });
-        $this->mock_function('curl_setopt_array', function () {
-            return true;
-        });
-        $this->mock_function('curl_getinfo', function () {
-            return 200;
-        });
-        $this->mock_function('curl_close', function () {
-            return null;
-        });
+        $this->mock_function('curl_exec', fn() => '');
+        $this->mock_function('curl_setopt_array', fn() => true);
+        $this->mock_function('curl_getinfo', fn() => 200);
+        $this->mock_function('curl_close', fn() => null);
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 

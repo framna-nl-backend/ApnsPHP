@@ -61,9 +61,7 @@ class PushHttpSendTest extends PushTest
      */
     public function testHttpSendReturnsFalseOnCurlSessionFail(): void
     {
-        $this->mock_function('curl_exec', function () {
-            return false;
-        });
+        $this->mock_function('curl_exec', fn() => false);
 
         $this->set_reflection_property_value('environment', Environment::Sandbox);
         $this->set_reflection_property_value('hSocket', curl_init());
@@ -80,7 +78,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_accessible_reflection_method('httpSend');
+        $method = $this->get_reflection_method('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -95,21 +93,11 @@ class PushHttpSendTest extends PushTest
      */
     public function testHttpSendReturnsFalseOnCurlOptsCannotBeSet(): void
     {
-        $this->mock_function('curl_setopt_array', function () {
-            return false;
-        });
-
-        $this->mock_function('curl_exec', function () {
-            return '';
-        });
-
-        $this->mock_function('curl_errno', function () {
-            return 56;
-        });
-
-        $this->mock_function('curl_error', function () {
-            return 'OpenSSL SSL_read: error:14094415:SSL routines:ssl3_read_bytes:sslv3 alert certificate expired';
-        });
+        $this->mock_function('curl_setopt_array', fn() => false);
+        $this->mock_function('curl_exec', fn() => '');
+        $this->mock_function('curl_errno', fn() => 56);
+        $error = 'OpenSSL SSL_read: error:14094415:SSL routines:ssl3_read_bytes:sslv3 alert certificate expired';
+        $this->mock_function('curl_error', fn() => $error);
 
         $this->set_reflection_property_value('environment', Environment::Sandbox);
 
@@ -125,7 +113,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_accessible_reflection_method('httpSend');
+        $method = $this->get_reflection_method('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -141,17 +129,9 @@ class PushHttpSendTest extends PushTest
      */
     public function testHttpSendReturnsFalseOnRequestFail(): void
     {
-        $this->mock_function('curl_setopt_array', function () {
-            return true;
-        });
-
-        $this->mock_function('curl_exec', function () {
-            return '';
-        });
-
-        $this->mock_function('curl_getinfo', function () {
-            return 500;
-        });
+        $this->mock_function('curl_setopt_array', fn() => true);
+        $this->mock_function('curl_exec', fn() => '');
+        $this->mock_function('curl_getinfo', fn() => 500);
 
         $this->set_reflection_property_value('environment', Environment::Sandbox);
 
@@ -167,7 +147,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_accessible_reflection_method('httpSend');
+        $method = $this->get_reflection_method('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -184,17 +164,9 @@ class PushHttpSendTest extends PushTest
      */
     public function testHttpSendReturnsTrueOnSuccess(): void
     {
-        $this->mock_function('curl_setopt_array', function () {
-            return true;
-        });
-
-        $this->mock_function('curl_exec', function () {
-            return '';
-        });
-
-        $this->mock_function('curl_getinfo', function () {
-            return 200;
-        });
+        $this->mock_function('curl_setopt_array', fn() => true);
+        $this->mock_function('curl_exec', fn() => '');
+        $this->mock_function('curl_getinfo', fn() => 200);
 
         $this->set_reflection_property_value('environment', Environment::Sandbox);
 
@@ -210,7 +182,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_accessible_reflection_method('httpSend');
+        $method = $this->get_reflection_method('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertTrue($result);

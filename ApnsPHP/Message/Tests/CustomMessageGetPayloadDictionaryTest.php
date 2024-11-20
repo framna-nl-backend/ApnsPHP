@@ -60,7 +60,7 @@ class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
             'name' => 'value'
         ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -109,7 +109,7 @@ class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
             'name' => 'value'
         ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -123,7 +123,7 @@ class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
     {
         $payload = [ 'aps' => [ 'alert' => [] ] ];
 
-        $result = $this->get_accessible_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
