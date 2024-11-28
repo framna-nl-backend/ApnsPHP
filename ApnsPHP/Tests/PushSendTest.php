@@ -267,7 +267,7 @@ class PushSendTest extends PushTest
     public function testSendSuccessfullySends(): void
     {
         $this->mock_function('curl_exec', function () {
-            return true;
+            return '';
         });
         $this->mock_function('curl_setopt_array', function () {
             return true;

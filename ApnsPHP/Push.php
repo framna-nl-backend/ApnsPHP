@@ -572,6 +572,7 @@ class Push
                                         "/{$this->sendRetryTimes}): {$messageBytes} bytes.");
 
                 $errorMessage = null;
+                $reply        = '';
 
                 if (!$this->httpSend($message, $reply)) {
                     $errorMessage = [
@@ -629,18 +630,27 @@ class Push
             $headers[] = sprintf('Authorization: Bearer %s', $this->providerToken);
         }
 
-        if (
-            !(curl_setopt_array($this->hSocket, [
-            CURLOPT_POST => true,
-            CURLOPT_URL => sprintf(
-                '%s/3/device/%s',
-                $this->HTTPServiceURLs[$this->environment],
-                $message->getRecipient()
-            ),
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_POSTFIELDS => $message->getPayload()
-            ]) && ($reply = curl_exec($this->hSocket)) !== false)
-        ) {
+        $curl_setopt_result = curl_setopt_array(
+            $this->hSocket,
+            [
+                CURLOPT_POST => true,
+                CURLOPT_URL => sprintf(
+                    '%s/3/device/%s',
+                    $this->HTTPServiceURLs[$this->environment],
+                    $message->getRecipient()
+                ),
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_POSTFIELDS => $message->getPayload()
+            ]
+        );
+
+        $curl_exec_result = curl_exec($this->hSocket);
+
+        if (!is_bool($curl_exec_result)) {
+            $reply = $curl_exec_result;
+        }
+
+        if ($curl_setopt_result !== true || $curl_exec_result === false) {
             $errorCode = curl_errno($this->hSocket);
 
             if ($errorCode > 0) {
