@@ -100,7 +100,7 @@ class PushHttpSendTest extends PushTest
         });
 
         $this->mock_function('curl_exec', function () {
-            return true;
+            return '';
         });
 
         $this->mock_function('curl_errno', function () {
@@ -146,7 +146,7 @@ class PushHttpSendTest extends PushTest
         });
 
         $this->mock_function('curl_exec', function () {
-            return true;
+            return '';
         });
 
         $this->mock_function('curl_getinfo', function () {
@@ -189,7 +189,7 @@ class PushHttpSendTest extends PushTest
         });
 
         $this->mock_function('curl_exec', function () {
-            return true;
+            return '';
         });
 
         $this->mock_function('curl_getinfo', function () {
