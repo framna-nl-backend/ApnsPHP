@@ -139,11 +139,11 @@ jobs:
     if: ${{ github.repository_owner == 'move-backend' && github.ref_name == 'master' }}
     name: "Report status"
     steps:
-      - name: Post failure message to \#ams-backend
+
+      - name: Post build message
         uses: slackapi/slack-github-action@v2.0.0
-        if: failure()
         with:
-          webhook: ${{ secrets.SLACK_FAILURE_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
             text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
@@ -153,10 +153,11 @@ jobs:
                   type: "mrkdwn"
                   text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 
-      - name: Post failure message to \#ams-backend-build
+      - name: Post failure message
         uses: slackapi/slack-github-action@v2.0.0
+        if: failure()
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_FAILURE_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
             text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
