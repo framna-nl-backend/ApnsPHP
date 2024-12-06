@@ -470,7 +470,7 @@ class Push
     public function add(Message $message): void
     {
         $messagePayload = $message->getPayload();
-        $recipients = $message->getRecipientsNumber();
+        $recipients = $message->getRecipientsCount();
 
         $messageQueueLen = count($this->messageQueue);
         for ($i = 0; $i < $recipients; $i++) {

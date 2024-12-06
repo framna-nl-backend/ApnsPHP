@@ -29,7 +29,7 @@ class PushAddTest extends PushTest
                       ->will($this->returnValue('payload'));
 
         $this->message->expects($this->once())
-                      ->method('getRecipientsNumber')
+                      ->method('getRecipientsCount')
                       ->will($this->returnValue(1));
 
         $this->message->expects($this->once())
@@ -63,7 +63,7 @@ class PushAddTest extends PushTest
                       ->will($this->returnValue('payload'));
 
         $this->message->expects($this->once())
-                      ->method('getRecipientsNumber')
+                      ->method('getRecipientsCount')
                       ->will($this->returnValue(4));
 
         $this->message->expects($this->exactly(4))
@@ -90,7 +90,7 @@ class PushAddTest extends PushTest
                       ->will($this->returnValue('payload'));
 
         $this->message->expects($this->once())
-                      ->method('getRecipientsNumber')
+                      ->method('getRecipientsCount')
                       ->will($this->returnValue(0));
 
         $this->class->add($this->message);

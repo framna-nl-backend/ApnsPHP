@@ -208,18 +208,6 @@ class Message
     /**
      * Get the number of recipients.
      *
-     * @deprecated Use getRecipientsCount() instead.
-     *
-     * @return int Recipient's number.
-     */
-    public function getRecipientsNumber(): int
-    {
-        return $this->getRecipientsCount();
-    }
-
-    /**
-     * Get the number of recipients.
-     *
      * @return int Recipient's number.
      */
     public function getRecipientsCount(): int
@@ -417,44 +405,6 @@ class Message
             );
         }
         $this->customProperties[$name] = $value;
-    }
-
-    /**
-     * Get the first custom property name.
-     *
-     * @deprecated Use getCustomPropertyNames() instead.
-     *
-     * @return string The first custom property name.
-     */
-    public function getCustomPropertyName(): string
-    {
-        if (empty($this->customProperties)) {
-            throw new Exception(
-                "No custom property exists!"
-            );
-        }
-
-        $keys = array_keys($this->customProperties);
-        return $keys[0];
-    }
-
-    /**
-     * Get the first custom property value.
-     *
-     * @deprecated Use getCustomProperty() instead.
-     *
-     * @return mixed The first custom property value.
-     */
-    public function getCustomPropertyValue()
-    {
-        if (empty($this->customProperties)) {
-            throw new Exception(
-                "No custom property exists!"
-            );
-        }
-
-        $aKeys = array_keys($this->customProperties);
-        return $this->customProperties[$aKeys[0]];
     }
 
     /**

@@ -230,70 +230,6 @@ class MessageGetTest extends MessageTest
     }
 
     /**
-     * Test that getCustomPropertyName() gets the first property name.
-     *
-     * @covers \ApnsPHP\Message::getCustomPropertyName
-     */
-    public function testGetCustomPropertyNameReturnsFirstPropertyName(): void
-    {
-        $properties = [
-            'my-title'   => 'My Title',
-            'my-message' => 'My Message',
-        ];
-
-        $this->set_reflection_property_value('customProperties', $properties);
-
-        $value = $this->class->getCustomPropertyName();
-
-        $this->assertSame('my-title', $value);
-    }
-
-    /**
-     * Test that getCustomPropertyName() throws an exception if no custom property is set.
-     *
-     * @covers \ApnsPHP\Message::getCustomPropertyName
-     */
-    public function testGetCustomPropertyNameThrowsExceptionWhenNoneSet(): void
-    {
-        $this->expectException('ApnsPHP\Message\Exception');
-        $this->expectExceptionMessage('No custom property exists!');
-
-        $this->class->getCustomPropertyName();
-    }
-
-    /**
-     * Test that getCustomPropertyValue() gets the first property value.
-     *
-     * @covers \ApnsPHP\Message::getCustomPropertyValue
-     */
-    public function testGetCustomPropertyValueReturnsFirstPropertyValue(): void
-    {
-        $properties = [
-            'my-title'   => 'My Title',
-            'my-message' => 'My Message',
-        ];
-
-        $this->set_reflection_property_value('customProperties', $properties);
-
-        $value = $this->class->getCustomPropertyValue();
-
-        $this->assertSame('My Title', $value);
-    }
-
-    /**
-     * Test that getCustomPropertyValue() throws an exception if no custom property is set.
-     *
-     * @covers \ApnsPHP\Message::getCustomPropertyValue
-     */
-    public function testGetCustomPropertyValueThrowsExceptionWhenNoneSet(): void
-    {
-        $this->expectException('ApnsPHP\Message\Exception');
-        $this->expectExceptionMessage('No custom property exists!');
-
-        $this->class->getCustomPropertyValue();
-    }
-
-    /**
      * Test that getCustomPropertyValue() successfully returns an existing property.
      *
      * @covers \ApnsPHP\Message::getCustomProperty
@@ -361,25 +297,6 @@ class MessageGetTest extends MessageTest
         $value = $this->class->getCustomPropertyNames();
 
         $this->assertArrayEmpty($value);
-    }
-
-    /**
-     * Test that getRecipientsNumber() returns the count of set device tokens.
-     *
-     * @covers \ApnsPHP\Message::getRecipientsNumber
-     */
-    public function testGetRecipientsNumber(): void
-    {
-        $tokens = [
-            '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485L',
-            '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485B'
-        ];
-
-        $this->set_reflection_property_value('deviceTokens', $tokens);
-
-        $value = $this->class->getRecipientsNumber();
-
-        $this->assertSame(2, $value);
     }
 
     /**
