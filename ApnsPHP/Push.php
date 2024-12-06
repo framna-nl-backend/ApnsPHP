@@ -27,12 +27,6 @@ use Psr\Log\LoggerInterface;
 class Push
 {
     /**
-     * Device token length.
-     * @var int
-     */
-    public const DEVICE_BINARY_SIZE = 32;
-
-    /**
      * Default write interval in micro seconds.
      * @var int
      */
@@ -43,24 +37,6 @@ class Push
      * @var int
      */
     public const CONNECT_RETRY_INTERVAL = 1000000;
-
-    /**
-     * Payload command.
-     * @var int
-     */
-    protected const COMMAND_PUSH = 1;
-
-    /**
-     * Error-response packet size.
-     * @var int
-     */
-    protected const ERROR_RESPONSE_SIZE = 6;
-
-    /**
-     * Error-response command code.
-     * @var int
-     */
-    protected const ERROR_RESPONSE_COMMAND = 8;
 
     /**
      * Status code for internal error (not Apple).
