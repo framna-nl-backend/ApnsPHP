@@ -19,6 +19,12 @@ use UnexpectedValueException;
 class LiveActivity extends Message
 {
     /**
+     * Notification activity-id.
+     * @var string
+     */
+    protected string $activityId;
+
+    /**
      * Content state information
      * @var array<string,mixed>|object
      */
@@ -84,6 +90,9 @@ class LiveActivity extends Message
         }
         if (isset($this->dismiss_timestamp)) {
             $payload[self::APPLE_RESERVED_NAMESPACE]['dismissal-date'] = $this->dismiss_timestamp;
+        }
+        if (isset($this->activityId)) {
+            $payload[self::APPLE_RESERVED_NAMESPACE]['activity-id'] = $this->activityId;
         }
 
         if ($this->event !== LiveActivityEvent::Start) {
@@ -255,5 +264,25 @@ class LiveActivity extends Message
     public function getContentState(): object|array
     {
         return $this->state;
+    }
+
+    /**
+     * Set the activity-id of a notification
+     *
+     * @param string $activityId An activity-id (undocumented).
+     */
+    public function setActivityId(string $activityId): void
+    {
+        $this->activityId = $activityId;
+    }
+
+    /**
+     * Get the activity-id of a notification
+     *
+     * @return string An activity-id (undocumented).
+     */
+    public function getActivityId(): string
+    {
+        return $this->activityId;
     }
 }

@@ -40,6 +40,7 @@ class LiveActivityGetPayloadDictionaryTest extends LiveActivityTestBase
         $this->class->setAttributesType('Type');
         $this->class->setStaleTimestamp(1);
         $this->class->setDismissTimestamp(2);
+        $this->class->setActivityId('some-id');
 
         $payload = [
             'aps' => [
@@ -56,6 +57,7 @@ class LiveActivityGetPayloadDictionaryTest extends LiveActivityTestBase
                 'dismissal-date'    => 2,
                 'attributes-type'   => 'Type',
                 'attributes'        => [],
+                'activity-id'       => 'some-id',
             ],
             'property' => 'property',
             'name' => 'value'

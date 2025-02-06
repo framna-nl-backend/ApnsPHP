@@ -89,6 +89,20 @@ class LiveActivityGetTest extends LiveActivityTestBase
     }
 
     /**
+     * Test that getActivityId() gets the activity id.
+     *
+     * @covers \ApnsPHP\Message\LiveActivity::getActivityId
+     */
+    public function testGetActivityId(): void
+    {
+        $this->set_reflection_property_value('activityId', 'some-id');
+
+        $value = $this->class->getActivityId();
+
+        $this->assertSame('some-id', $value);
+    }
+
+    /**
      * Test that getContentState() gets the activity state.
      *
      * @covers \ApnsPHP\Message\LiveActivity::getContentState

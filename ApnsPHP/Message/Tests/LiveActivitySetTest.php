@@ -140,6 +140,17 @@ class LiveActivitySetTest extends LiveActivityTestBase
     }
 
     /**
+     * Test that setActivityId() sets the time the activity dismisses.
+     *
+     * @covers \ApnsPHP\Message\LiveActivity::setActivityId
+     */
+    public function testSetActivityId(): void
+    {
+        $this->class->setActivityId('some-id');
+        $this->assertPropertySame('activityId', 'some-id');
+    }
+
+    /**
      * Test that setContentState() sets the time the activity dismisses.
      *
      * @covers \ApnsPHP\Message\LiveActivity::setContentState
