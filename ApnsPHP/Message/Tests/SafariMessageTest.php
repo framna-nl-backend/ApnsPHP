@@ -11,7 +11,7 @@
 namespace ApnsPHP\Message\Tests;
 
 use ApnsPHP\Message\SafariMessage;
-use Lunr\Halo\LunrBaseTest;
+use Lunr\Halo\LunrBaseTestCase;
 use ReflectionClass;
 
 /**
@@ -20,7 +20,7 @@ use ReflectionClass;
  *
  * @covers \ApnsPHP\Message\SafariMessage
  */
-abstract class SafariMessageTest extends LunrBaseTest
+abstract class SafariMessageTest extends LunrBaseTestCase
 {
     /**
      * Class to test

@@ -40,7 +40,7 @@ class PushSendTest extends PushTest
      */
     public function testSendThrowsExceptionOnEmptyQueue(): void
     {
-        $this->set_reflection_property_value('hSocket', curl_init());
+        $this->setReflectionPropertyValue('hSocket', curl_init());
 
         $this->expectException('ApnsPHP\Push\Exception');
         $this->expectExceptionMessage('No notifications queued to be sent');
@@ -71,11 +71,11 @@ class PushSendTest extends PushTest
         ];
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
         $this->logger->expects($this->exactly(6))
                      ->method('info')
@@ -119,11 +119,11 @@ class PushSendTest extends PushTest
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
         $this->logger->expects($this->exactly(16))
                      ->method('info')
@@ -182,11 +182,11 @@ class PushSendTest extends PushTest
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
         $this->logger->expects($this->exactly(7))
                      ->method('info')
@@ -230,11 +230,11 @@ class PushSendTest extends PushTest
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
         $this->logger->expects($this->once())
                      ->method('info')

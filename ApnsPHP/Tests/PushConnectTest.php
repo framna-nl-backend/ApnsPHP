@@ -28,7 +28,7 @@ class PushConnectTest extends PushTest
      */
     public function testConnectSuccess(): void
     {
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->mock_function('curl_setopt_array', fn() => true);
 
@@ -52,8 +52,8 @@ class PushConnectTest extends PushTest
      */
     public function testConnectThrowsExceptionOnHttpInitFail(): void
     {
-        $this->set_reflection_property_value('connectRetryInterval', 0);
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('connectRetryInterval', 0);
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->mock_function('curl_setopt_array', fn() => false);
 

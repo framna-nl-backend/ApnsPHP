@@ -11,7 +11,7 @@
 namespace ApnsPHP\Message\Tests;
 
 use ApnsPHP\Message\CustomMessage;
-use Lunr\Halo\LunrBaseTest;
+use Lunr\Halo\LunrBaseTestCase;
 use ReflectionClass;
 
 /**
@@ -20,7 +20,7 @@ use ReflectionClass;
  *
  * @covers \ApnsPHP\Message\CustomMessage
  */
-abstract class CustomMessageTest extends LunrBaseTest
+abstract class CustomMessageTest extends LunrBaseTestCase
 {
     /**
      * Class to test

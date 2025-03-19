@@ -10,7 +10,7 @@
 namespace ApnsPHP\Message\Tests;
 
 use ApnsPHP\Message\LiveActivity;
-use Lunr\Halo\LunrBaseTest;
+use Lunr\Halo\LunrBaseTestCase;
 
 /**
  * This class contains common setup routines, providers
@@ -18,7 +18,7 @@ use Lunr\Halo\LunrBaseTest;
  *
  * @covers \ApnsPHP\Message\LiveActivity
  */
-abstract class LiveActivityTestBase extends LunrBaseTest
+abstract class LiveActivityTestCase extends LunrBaseTestCase
 {
     /**
      * Class to test

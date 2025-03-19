@@ -19,7 +19,7 @@ use UnexpectedValueException;
  *
  * @covers \ApnsPHP\Message
  */
-class LiveActivitySetTest extends LiveActivityTestBase
+class LiveActivitySetTest extends LiveActivityTestCase
 {
     /**
      * Get events to test with

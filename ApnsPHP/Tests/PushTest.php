@@ -13,7 +13,7 @@ namespace ApnsPHP\Tests;
 use ApnsPHP\Environment;
 use ApnsPHP\Message;
 use ApnsPHP\Push;
-use Lunr\Halo\LunrBaseTest;
+use Lunr\Halo\LunrBaseTestCase;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
@@ -24,7 +24,7 @@ use ReflectionClass;
  *
  * @covers \ApnsPHP\Push
  */
-abstract class PushTest extends LunrBaseTest
+abstract class PushTest extends LunrBaseTestCase
 {
     /**
      * Mock instance of a Logger class.

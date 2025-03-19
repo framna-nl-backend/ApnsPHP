@@ -29,8 +29,8 @@ class PushHttpInitTest extends PushTest
      */
     public function testHttpInitSucceedsWithCertificate(): void
     {
-        $this->set_reflection_property_value('providerCertFile', 'cert.pem');
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('providerCertFile', 'cert.pem');
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $message = [
             ['Trying to initialize HTTP/2 backend...'],
@@ -42,7 +42,7 @@ class PushHttpInitTest extends PushTest
                      ->method('info')
                      ->withConsecutive(...$message);
 
-        $method = $this->get_reflection_method('httpInit');
+        $method = $this->getReflectionMethod('httpInit');
         $result = $method->invoke($this->class);
 
         $this->assertTrue($result);
@@ -55,10 +55,10 @@ class PushHttpInitTest extends PushTest
      */
     public function testHttpInitSucceedsWithKey(): void
     {
-        $this->set_reflection_property_value('providerCertFile', 'key.p8');
-        $this->set_reflection_property_value('providerTeamId', 'TheTeam');
-        $this->set_reflection_property_value('providerKeyId', 'TheKey');
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('providerCertFile', 'key.p8');
+        $this->setReflectionPropertyValue('providerTeamId', 'TheTeam');
+        $this->setReflectionPropertyValue('providerKeyId', 'TheKey');
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $key = $this->getMockBuilder('Lcobucci\JWT\Signer\Key')
                     ->disableOriginalConstructor()
@@ -105,7 +105,7 @@ class PushHttpInitTest extends PushTest
                          [ 'Initialized HTTP/2 backend.' ]
                      );
 
-        $method = $this->get_reflection_method('httpInit');
+        $method = $this->getReflectionMethod('httpInit');
         $result = $method->invoke($this->class);
 
         $this->assertTrue($result);
@@ -121,10 +121,10 @@ class PushHttpInitTest extends PushTest
      */
     public function testHttpInitThrowsExceptionOnCurlSetoptFail(): void
     {
-        $this->set_reflection_property_value('providerCertFile', 'key.p8');
-        $this->set_reflection_property_value('providerTeamId', 'TheTeam');
-        $this->set_reflection_property_value('providerKeyId', 'TheKey');
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('providerCertFile', 'key.p8');
+        $this->setReflectionPropertyValue('providerTeamId', 'TheTeam');
+        $this->setReflectionPropertyValue('providerKeyId', 'TheKey');
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->mock_function('curl_setopt_array', fn() => false);
 
@@ -175,7 +175,7 @@ class PushHttpInitTest extends PushTest
         $this->expectException('ApnsPHP\Exception');
         $this->expectExceptionMessage('Unable to initialize HTTP/2 backend.');
 
-        $method = $this->get_reflection_method('httpInit');
+        $method = $this->getReflectionMethod('httpInit');
 
         # phpstan doesn't detect the potential throw through ReflectionMethod.
         # Verified that by making the method public and calling it directly

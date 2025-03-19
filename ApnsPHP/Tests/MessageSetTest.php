@@ -332,7 +332,7 @@ class MessageSetTest extends MessageTest
      */
     public function testSetAdditionalCustomProperty(): void
     {
-        $this->set_reflection_property_value('customProperties', [ 'myId' => 'my-news-1' ]);
+        $this->setReflectionPropertyValue('customProperties', [ 'myId' => 'my-news-1' ]);
 
         $this->class->setCustomProperty('mySecondId', 'my-sport-news-1');
 

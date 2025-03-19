@@ -23,7 +23,7 @@ class SafariMessageGetTest extends SafariMessageTest
      */
     public function testGetAction(): void
     {
-        $this->set_reflection_property_value('action', 'My Action');
+        $this->setReflectionPropertyValue('action', 'My Action');
 
         $value = $this->class->getAction();
 
@@ -37,7 +37,7 @@ class SafariMessageGetTest extends SafariMessageTest
      */
     public function testGetUrlArgs(): void
     {
-        $this->set_reflection_property_value('urlArgs', [ 'args' ]);
+        $this->setReflectionPropertyValue('urlArgs', [ 'args' ]);
 
         $value = $this->class->getUrlArgs();
 

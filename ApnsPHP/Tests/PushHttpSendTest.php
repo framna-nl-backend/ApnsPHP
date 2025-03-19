@@ -51,7 +51,7 @@ class PushHttpSendTest extends PushTest
                       ->method('getPushType')
                       ->will($this->returnValue(PushType::Alert));
 
-        $this->set_reflection_property_value('providerToken', 'jwt');
+        $this->setReflectionPropertyValue('providerToken', 'jwt');
     }
 
     /**
@@ -63,8 +63,8 @@ class PushHttpSendTest extends PushTest
     {
         $this->mock_function('curl_exec', fn() => false);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
 
         $this->setHttpHeaders();
 
@@ -78,7 +78,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -99,7 +99,7 @@ class PushHttpSendTest extends PushTest
         $error = 'OpenSSL SSL_read: error:14094415:SSL routines:ssl3_read_bytes:sslv3 alert certificate expired';
         $this->mock_function('curl_error', fn() => $error);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
 
         $this->setHttpHeaders();
 
@@ -113,7 +113,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -133,7 +133,7 @@ class PushHttpSendTest extends PushTest
         $this->mock_function('curl_exec', fn() => '');
         $this->mock_function('curl_getinfo', fn() => 500);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
 
         $this->setHttpHeaders();
 
@@ -147,7 +147,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -168,7 +168,7 @@ class PushHttpSendTest extends PushTest
         $this->mock_function('curl_exec', fn() => '');
         $this->mock_function('curl_getinfo', fn() => 200);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
 
         $this->setHttpHeaders();
 
@@ -182,7 +182,7 @@ class PushHttpSendTest extends PushTest
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertTrue($result);

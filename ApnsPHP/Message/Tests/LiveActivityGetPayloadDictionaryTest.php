@@ -16,7 +16,7 @@ use ApnsPHP\Message\LiveActivityEvent;
  *
  * @covers \ApnsPHP\Message
  */
-class LiveActivityGetPayloadDictionaryTest extends LiveActivityTestBase
+class LiveActivityGetPayloadDictionaryTest extends LiveActivityTestCase
 {
     /**
      * Test that getPayloadDictionary returns complete payload
@@ -63,7 +63,7 @@ class LiveActivityGetPayloadDictionaryTest extends LiveActivityTestBase
             'name' => 'value'
         ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')
+        $result = $this->getReflectionMethod('getPayloadDictionary')
                        ->invoke($this->class);
 
         $this->assertEquals($payload, $result);
@@ -88,7 +88,7 @@ class LiveActivityGetPayloadDictionaryTest extends LiveActivityTestBase
             ]
         ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')
+        $result = $this->getReflectionMethod('getPayloadDictionary')
                        ->invoke($this->class);
 
         $this->assertEquals($payload, $result);

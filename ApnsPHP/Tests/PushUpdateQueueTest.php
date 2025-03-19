@@ -24,7 +24,7 @@ class PushUpdateQueueTest extends PushTest
      */
     public function testUpdateQueueReturnsFalse(): void
     {
-        $method = $this->get_reflection_method('updateQueue');
+        $method = $this->getReflectionMethod('updateQueue');
         $result = $method->invoke($this->class);
 
         $this->assertFalse($result);
@@ -52,8 +52,8 @@ class PushUpdateQueueTest extends PushTest
 
         $resultMessage = [ 3 => [ 'MESSAGE' => $this->message, 'ERRORS' => [ $errorMessage ] ]];
 
-        $this->set_reflection_property_value('messageQueue', $queue);
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('messageQueue', $queue);
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->logger->expects($this->exactly(3))
                      ->method('info')
@@ -70,10 +70,10 @@ class PushUpdateQueueTest extends PushTest
                      ->method('error')
                      ->with('Unable to send message ID 3: Missing payload (4).');
 
-        $method = $this->get_reflection_method('updateQueue');
+        $method = $this->getReflectionMethod('updateQueue');
         $result = $method->invokeArgs($this->class, [ $errorMessage ]);
 
-        $messageQueue  = $this->get_reflection_property_value('messageQueue');
+        $messageQueue  = $this->getReflectionPropertyValue('messageQueue');
 
         $this->assertTrue($result);
         $this->assertEquals($resultMessage, $messageQueue);
@@ -99,8 +99,8 @@ class PushUpdateQueueTest extends PushTest
             4 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ]
         ];
 
-        $this->set_reflection_property_value('messageQueue', $queue);
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('messageQueue', $queue);
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->logger->expects($this->exactly(3))
                      ->method('info')
@@ -117,10 +117,10 @@ class PushUpdateQueueTest extends PushTest
                      ->method('error')
                      ->with('Unable to send message ID 2: Missing payload (4).');
 
-        $method = $this->get_reflection_method('updateQueue');
+        $method = $this->getReflectionMethod('updateQueue');
         $result = $method->invoke($this->class, $errorMessage);
 
-        $messageQueue  = $this->get_reflection_property('messageQueue')->getValue($this->class);
+        $messageQueue  = $this->getReflectionProperty('messageQueue')->getValue($this->class);
 
         $this->assertTrue($result);
         $this->assertEquals([ 3 => $queue[3], 4 => $queue[4] ], $messageQueue);
