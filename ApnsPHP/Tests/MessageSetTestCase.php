@@ -17,7 +17,7 @@ use ApnsPHP\Message\PushType;
  *
  * @covers \ApnsPHP\Message
  */
-class MessageSetTest extends MessageTest
+class MessageSetTestCase extends MessageTestCase
 {
     /**
      * Unit test data provider for reserved apple namespace keys.

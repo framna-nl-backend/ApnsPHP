@@ -15,7 +15,7 @@ namespace ApnsPHP\Tests;
  *
  * @covers \ApnsPHP\Message
  */
-class MessageAddRecipientTest extends MessageTest
+class MessageAddRecipientTestCase extends MessageTestCase
 {
     /**
      * Test that addRecipient throws exception on invalid token

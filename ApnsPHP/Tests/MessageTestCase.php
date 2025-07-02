@@ -1,39 +1,39 @@
 <?php
 
 /**
- * This file contains the CustomMessageTest class.
+ * This file contains the MessageTestCase class.
  *
  * SPDX-FileCopyrightText: Copyright 2021 M2mobi B.V., Amsterdam, The Netherlands
  * SPDX-FileCopyrightText: Copyright 2022 Move Agency Group B.V., Zwolle, The Netherlands
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-namespace ApnsPHP\Message\Tests;
+namespace ApnsPHP\Tests;
 
-use ApnsPHP\Message\CustomMessage;
+use ApnsPHP\Message;
 use Lunr\Halo\LunrBaseTestCase;
 use ReflectionClass;
 
 /**
  * This class contains common setup routines, providers
- * and shared attributes for testing the CustomMessage class.
+ * and shared attributes for testing the Message class.
  *
- * @covers \ApnsPHP\Message\CustomMessage
+ * @covers \ApnsPHP\Message
  */
-abstract class CustomMessageTest extends LunrBaseTestCase
+abstract class MessageTestCase extends LunrBaseTestCase
 {
     /**
      * Class to test
-     * @var CustomMessage
+     * @var Message
      */
-    protected CustomMessage $class;
+    protected Message $class;
 
     /**
      * TestCase constructor
      */
     public function setUp(): void
     {
-        $this->class      = new CustomMessage();
+        $this->class = new Message();
         $this->baseSetUp($this->class);
     }
 

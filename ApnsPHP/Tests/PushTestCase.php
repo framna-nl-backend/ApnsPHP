@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains the PushTest class.
+ * This file contains the PushTestCase class.
  *
  * SPDX-FileCopyrightText: Copyright 2021 M2mobi B.V., Amsterdam, The Netherlands
  * SPDX-FileCopyrightText: Copyright 2022 Move Agency Group B.V., Zwolle, The Netherlands
@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  *
  * @covers \ApnsPHP\Push
  */
-abstract class PushTest extends LunrBaseTestCase
+abstract class PushTestCase extends LunrBaseTestCase
 {
     /**
      * Mock instance of a Logger class.

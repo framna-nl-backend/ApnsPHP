@@ -17,7 +17,7 @@ use ApnsPHP\Message;
  *
  * @covers \ApnsPHP\Message
  */
-class MessageSelfForRecipientTest extends MessageTest
+class MessageSelfForRecipientTestCase extends MessageTestCase
 {
     /**
      * Test that selfForRecipient throws exception on invalid index

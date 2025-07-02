@@ -15,7 +15,7 @@ namespace ApnsPHP\Tests;
  *
  * @covers \ApnsPHP\Push
  */
-class PushUpdateQueueTest extends PushTest
+class PushUpdateQueueTestCase extends PushTestCase
 {
     /**
      * Test that updateQueue() returns false if there is no errorMessage

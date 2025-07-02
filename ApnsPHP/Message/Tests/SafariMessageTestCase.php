@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains the SafariMessageTest class.
+ * This file contains the SafariMessageTestCase class.
  *
  * SPDX-FileCopyrightText: Copyright 2021 M2mobi B.V., Amsterdam, The Netherlands
  * SPDX-FileCopyrightText: Copyright 2022 Move Agency Group B.V., Zwolle, The Netherlands
@@ -20,7 +20,7 @@ use ReflectionClass;
  *
  * @covers \ApnsPHP\Message\SafariMessage
  */
-abstract class SafariMessageTest extends LunrBaseTestCase
+abstract class SafariMessageTestCase extends LunrBaseTestCase
 {
     /**
      * Class to test

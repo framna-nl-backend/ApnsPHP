@@ -14,7 +14,7 @@ namespace ApnsPHP\Message\Tests;
  *
  * @covers \ApnsPHP\Message\SafariMessage
  */
-class SafariMessageGetTest extends SafariMessageTest
+class SafariMessageGetTestCase extends SafariMessageTestCase
 {
     /**
      * Test that getAction() gets the label of the action button.

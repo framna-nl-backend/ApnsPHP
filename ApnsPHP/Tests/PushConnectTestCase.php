@@ -19,7 +19,7 @@ use Throwable;
  *
  * @covers \ApnsPHP\Push
  */
-class PushConnectTest extends PushTest
+class PushConnectTestCase extends PushTestCase
 {
     /**
      * Test that connect() connects successfully

@@ -19,7 +19,7 @@ use ApnsPHP\Message\PushType;
  *
  * @covers \ApnsPHP\Push
  */
-class PushHttpSendTest extends PushTest
+class PushHttpSendTestCase extends PushTestCase
 {
     /**
      * Helper function to set the http headers and verify calls to message getters
