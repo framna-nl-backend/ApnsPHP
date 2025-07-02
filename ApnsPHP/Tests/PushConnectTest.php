@@ -32,13 +32,22 @@ class PushConnectTest extends PushTest
 
         $this->mock_function('curl_setopt_array', fn() => true);
 
-        $this->logger->expects($this->exactly(3))
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->class->connect();
 
@@ -57,28 +66,34 @@ class PushConnectTest extends PushTest
 
         $this->mock_function('curl_setopt_array', fn() => false);
 
-        $message = [
-        ];
-
         $this->logger->expects($this->exactly(4))
                      ->method('error')
                      ->with('Unable to initialize HTTP/2 backend.');
 
-        $this->logger->expects($this->exactly(11))
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Retry to connect (1/3)...',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Retry to connect (2/3)...',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Retry to connect (3/3)...',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Retry to connect (1/3)...' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Retry to connect (2/3)...' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Retry to connect (3/3)...' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->expectException('ApnsPHP\Exception');
         $this->expectExceptionMessage('Unable to initialize HTTP/2 backend.');

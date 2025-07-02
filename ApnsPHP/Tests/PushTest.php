@@ -16,7 +16,6 @@ use ApnsPHP\Push;
 use Lunr\Halo\LunrBaseTestCase;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use ReflectionClass;
 
 /**
  * This class contains common setup routines, providers

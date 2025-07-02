@@ -55,13 +55,22 @@ class PushUpdateQueueTest extends PushTest
         $this->setReflectionPropertyValue('messageQueue', $queue);
         $this->setReflectionPropertyValue('logger', $this->logger);
 
-        $this->logger->expects($this->exactly(3))
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->logger->expects($this->never())
                      ->method('warning');
@@ -102,13 +111,22 @@ class PushUpdateQueueTest extends PushTest
         $this->setReflectionPropertyValue('messageQueue', $queue);
         $this->setReflectionPropertyValue('logger', $this->logger);
 
-        $this->logger->expects($this->exactly(3))
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->logger->expects($this->never())
                      ->method('warning');
