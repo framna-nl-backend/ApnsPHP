@@ -16,7 +16,7 @@ use ApnsPHP\Message\LiveActivityEvent;
  *
  * @covers \ApnsPHP\Message
  */
-class LiveActivityGetTest extends LiveActivityTestBase
+class LiveActivityGetTest extends LiveActivityTestCase
 {
     /**
      * Test that getEvent() gets the activity event.
@@ -25,7 +25,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetEvent(): void
     {
-        $this->set_reflection_property_value('event', LiveActivityEvent::Start);
+        $this->setReflectionPropertyValue('event', LiveActivityEvent::Start);
 
         $value = $this->class->getEvent();
 
@@ -39,7 +39,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetAttributes(): void
     {
-        $this->set_reflection_property_value('attributes', []);
+        $this->setReflectionPropertyValue('attributes', []);
 
         $value = $this->class->getAttributes();
 
@@ -53,7 +53,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetAttributesType(): void
     {
-        $this->set_reflection_property_value('attributes_type', 'Type');
+        $this->setReflectionPropertyValue('attributes_type', 'Type');
 
         $value = $this->class->getAttributesType();
 
@@ -67,7 +67,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetStaleTime(): void
     {
-        $this->set_reflection_property_value('stale_timestamp', 1);
+        $this->setReflectionPropertyValue('stale_timestamp', 1);
 
         $value = $this->class->getStaleTimestamp();
 
@@ -81,7 +81,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetDismissTime(): void
     {
-        $this->set_reflection_property_value('dismiss_timestamp', 1);
+        $this->setReflectionPropertyValue('dismiss_timestamp', 1);
 
         $value = $this->class->getDismissTimestamp();
 
@@ -95,7 +95,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetActivityId(): void
     {
-        $this->set_reflection_property_value('activityId', 'some-id');
+        $this->setReflectionPropertyValue('activityId', 'some-id');
 
         $value = $this->class->getActivityId();
 
@@ -109,7 +109,7 @@ class LiveActivityGetTest extends LiveActivityTestBase
      */
     public function testGetContentState(): void
     {
-        $this->set_reflection_property_value('state', []);
+        $this->setReflectionPropertyValue('state', []);
 
         $value = $this->class->getContentState();
 

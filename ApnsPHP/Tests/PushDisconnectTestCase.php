@@ -15,7 +15,7 @@ namespace ApnsPHP\Tests;
  *
  * @covers \ApnsPHP\Push
  */
-class PushDisconnectTest extends PushTest
+class PushDisconnectTestCase extends PushTestCase
 {
     /**
      * Test that disconnect() disconnects successfully
@@ -24,8 +24,8 @@ class PushDisconnectTest extends PushTest
      */
     public function testDisconnectSuccess(): void
     {
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->logger->expects($this->once())
                      ->method('info')

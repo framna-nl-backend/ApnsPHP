@@ -19,7 +19,7 @@ use ApnsPHP\Message\PushType;
  *
  * @covers \ApnsPHP\Push
  */
-class PushHttpSendTest extends PushTest
+class PushHttpSendTestCase extends PushTestCase
 {
     /**
      * Helper function to set the http headers and verify calls to message getters
@@ -29,11 +29,11 @@ class PushHttpSendTest extends PushTest
     {
         $this->message->expects($this->exactly(2))
                       ->method('getTopic')
-                      ->will($this->returnValue('topic'));
+                      ->willReturn('topic');
 
         $this->message->expects($this->exactly(2))
                       ->method('getExpiry')
-                      ->will($this->returnValue(10));
+                      ->willReturn(10);
 
         $this->message->expects($this->exactly(2))
                       ->method('getPriority')
@@ -41,17 +41,17 @@ class PushHttpSendTest extends PushTest
 
         $this->message->expects($this->exactly(2))
                       ->method('getCollapseId')
-                      ->will($this->returnValue('1'));
+                      ->willReturn('1');
 
         $this->message->expects($this->exactly(2))
                       ->method('getCustomIdentifier')
-                      ->will($this->returnValue('7530A828-E58E-433E-A38F-D8042208CF96'));
+                      ->willReturn('7530A828-E58E-433E-A38F-D8042208CF96');
 
         $this->message->expects($this->exactly(2))
                       ->method('getPushType')
-                      ->will($this->returnValue(PushType::Alert));
+                      ->willReturn(PushType::Alert);
 
-        $this->set_reflection_property_value('providerToken', 'jwt');
+        $this->setReflectionPropertyValue('providerToken', 'jwt');
     }
 
     /**
@@ -63,22 +63,22 @@ class PushHttpSendTest extends PushTest
     {
         $this->mock_function('curl_exec', fn() => false);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
 
         $this->setHttpHeaders();
 
         $this->message->expects($this->once())
                       ->method('getRecipient')
-                      ->will($this->returnValue('recipient'));
+                      ->willReturn('recipient');
 
         $this->message->expects($this->once())
                       ->method('getPayload')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -99,21 +99,21 @@ class PushHttpSendTest extends PushTest
         $error = 'OpenSSL SSL_read: error:14094415:SSL routines:ssl3_read_bytes:sslv3 alert certificate expired';
         $this->mock_function('curl_error', fn() => $error);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
 
         $this->setHttpHeaders();
 
         $this->message->expects($this->once())
                       ->method('getRecipient')
-                      ->will($this->returnValue('recipient'));
+                      ->willReturn('recipient');
 
         $this->message->expects($this->once())
                       ->method('getPayload')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -133,21 +133,21 @@ class PushHttpSendTest extends PushTest
         $this->mock_function('curl_exec', fn() => '');
         $this->mock_function('curl_getinfo', fn() => 500);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
 
         $this->setHttpHeaders();
 
         $this->message->expects($this->once())
                       ->method('getRecipient')
-                      ->will($this->returnValue('recipient'));
+                      ->willReturn('recipient');
 
         $this->message->expects($this->once())
                       ->method('getPayload')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertFalse($result);
@@ -168,21 +168,21 @@ class PushHttpSendTest extends PushTest
         $this->mock_function('curl_exec', fn() => '');
         $this->mock_function('curl_getinfo', fn() => 200);
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
 
         $this->setHttpHeaders();
 
         $this->message->expects($this->once())
                       ->method('getRecipient')
-                      ->will($this->returnValue('recipient'));
+                      ->willReturn('recipient');
 
         $this->message->expects($this->once())
                       ->method('getPayload')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $reply = 'reply';
 
-        $method = $this->get_reflection_method('httpSend');
+        $method = $this->getReflectionMethod('httpSend');
         $result = $method->invokeArgs($this->class, [ $this->message, &$reply ]);
 
         $this->assertTrue($result);

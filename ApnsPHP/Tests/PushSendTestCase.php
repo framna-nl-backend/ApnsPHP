@@ -18,7 +18,7 @@ use stdClass;
  *
  * @covers \ApnsPHP\Push
  */
-class PushSendTest extends PushTest
+class PushSendTestCase extends PushTestCase
 {
     /**
      * Test that send() throws an exception if there is no connection to the push notification service
@@ -40,7 +40,7 @@ class PushSendTest extends PushTest
      */
     public function testSendThrowsExceptionOnEmptyQueue(): void
     {
-        $this->set_reflection_property_value('hSocket', curl_init());
+        $this->setReflectionPropertyValue('hSocket', curl_init());
 
         $this->expectException('ApnsPHP\Push\Exception');
         $this->expectExceptionMessage('No notifications queued to be sent');
@@ -62,31 +62,33 @@ class PushSendTest extends PushTest
         $this->mock_function('curl_errno', fn() => 0);
         $this->mock_function('curl_error', fn() => '');
 
-        $error = [
-            'command' => 8,
-            'statusCode' => 4,
-            'identifier' => 1,
-            'time' => 1620029695,
-            'statusMessage' => 'Missing payload'
-        ];
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
-        $this->logger->expects($this->exactly(6))
+        $expectations = [
+            'Sending messages queue, run #1: 1 message(s) left in queue.',
+            'Disconnected.',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+            'Sending messages queue, run #2: 1 message(s) left in queue.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Sending messages queue, run #1: 1 message(s) left in queue.' ],
-                         [ 'Disconnected.' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                         [ 'Sending messages queue, run #2: 1 message(s) left in queue.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->logger->expects($this->once())
                      ->method('debug')
@@ -119,40 +121,58 @@ class PushSendTest extends PushTest
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
-        $this->logger->expects($this->exactly(16))
+        $expectations = [
+            'Sending messages queue, run #1: 1 message(s) left in queue.',
+            'Disconnected.',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+            'Sending messages queue, run #2: 1 message(s) left in queue.',
+            'Disconnected.',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+            'Sending messages queue, run #3: 1 message(s) left in queue.',
+            'Disconnected.',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+            'Sending messages queue, run #4: 1 message(s) left in queue.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Sending messages queue, run #1: 1 message(s) left in queue.' ],
-                         [ 'Disconnected.' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                         [ 'Sending messages queue, run #2: 1 message(s) left in queue.' ],
-                         [ 'Disconnected.' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                         [ 'Sending messages queue, run #3: 1 message(s) left in queue.' ],
-                         [ 'Disconnected.' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                         [ 'Sending messages queue, run #4: 1 message(s) left in queue.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
 
-        $this->logger->expects($this->exactly(3))
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
+
+        $expectations = [
+            'Sending message ID 1 [custom identifier: unset] (1/3): 0 bytes.',
+            'Sending message ID 1 [custom identifier: unset] (2/3): 0 bytes.',
+            'Sending message ID 1 [custom identifier: unset] (3/3): 0 bytes.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('debug')
-                     ->withConsecutive(
-                         [ 'Sending message ID 1 [custom identifier: unset] (1/3): 0 bytes.' ],
-                         [ 'Sending message ID 1 [custom identifier: unset] (2/3): 0 bytes.' ],
-                         [ 'Sending message ID 1 [custom identifier: unset] (3/3): 0 bytes.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->logger->expects($this->once())
                      ->method('warning')
@@ -182,24 +202,33 @@ class PushSendTest extends PushTest
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
-        $this->logger->expects($this->exactly(7))
+        $expectations = [
+            'Sending messages queue, run #1: 1 message(s) left in queue.',
+            'Disconnected.',
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
+            'Sending messages queue, run #2: 1 message(s) left in queue.',
+            'Message ID 1 [custom identifier: unset] has no error (200),
+                                 removing from queue...',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Sending messages queue, run #1: 1 message(s) left in queue.' ],
-                         [ 'Disconnected.' ],
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with certificate.' ],
-                         [ 'Initialized HTTP/2 backend.' ],
-                         [ 'Sending messages queue, run #2: 1 message(s) left in queue.' ],
-                         [ 'Message ID 1 [custom identifier: unset] has no error (200),
-                                 removing from queue...'],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->logger->expects($this->once())
                      ->method('debug')
@@ -230,11 +259,11 @@ class PushSendTest extends PushTest
 
         $message = [ 1 => [ 'MESSAGE' => $this->message, 'ERRORS' => [] ] ];
 
-        $this->set_reflection_property_value('environment', Environment::Sandbox);
-        $this->set_reflection_property_value('hSocket', curl_init());
-        $this->set_reflection_property_value('messageQueue', $message);
-        $this->set_reflection_property_value('logger', $this->logger);
-        $this->set_reflection_property_value('writeInterval', 0);
+        $this->setReflectionPropertyValue('environment', Environment::Sandbox);
+        $this->setReflectionPropertyValue('hSocket', curl_init());
+        $this->setReflectionPropertyValue('messageQueue', $message);
+        $this->setReflectionPropertyValue('logger', $this->logger);
+        $this->setReflectionPropertyValue('writeInterval', 0);
 
         $this->logger->expects($this->once())
                      ->method('info')

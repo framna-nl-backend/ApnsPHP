@@ -16,8 +16,8 @@
 		"lcobucci/jwt": "~4.1 || ~5.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": ">=9.0 <9.6",
-		"lunr/halo": "~0.10.0"
+		"phpunit/phpunit": ">=10.5 <11.0",
+		"lunr/halo": "~0.11.0"
 	},
 	"config": {
 		"optimize-autoloader": true

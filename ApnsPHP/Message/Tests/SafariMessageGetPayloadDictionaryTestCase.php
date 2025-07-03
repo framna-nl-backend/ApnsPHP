@@ -15,7 +15,7 @@ namespace ApnsPHP\Message\Tests;
  *
  * @covers \ApnsPHP\Message\SafariMessage
  */
-class SafariMessageGetPayloadDictionaryTest extends SafariMessageTest
+class SafariMessageGetPayloadDictionaryTestCase extends SafariMessageTestCase
 {
     /**
      * Test that getPayloadDictionary returns complete payload
@@ -40,7 +40,7 @@ class SafariMessageGetPayloadDictionaryTest extends SafariMessageTest
             ]
         ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->getReflectionMethod('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -54,7 +54,7 @@ class SafariMessageGetPayloadDictionaryTest extends SafariMessageTest
     {
         $payload = [ 'aps' => [ 'alert' => [] ] ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->getReflectionMethod('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }

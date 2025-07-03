@@ -20,7 +20,7 @@ use Lcobucci\JWT\Token\Signature;
  *
  * @covers \ApnsPHP\Push
  */
-class PushHttpInitTest extends PushTest
+class PushHttpInitTestCase extends PushTestCase
 {
     /**
      * Test that httpInit() succeeds with certificate
@@ -29,20 +29,27 @@ class PushHttpInitTest extends PushTest
      */
     public function testHttpInitSucceedsWithCertificate(): void
     {
-        $this->set_reflection_property_value('providerCertFile', 'cert.pem');
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('providerCertFile', 'cert.pem');
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
-        $message = [
-            ['Trying to initialize HTTP/2 backend...'],
-            ['Initializing HTTP/2 backend with certificate.'],
-            ['Initialized HTTP/2 backend.']
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with certificate.',
+            'Initialized HTTP/2 backend.',
         ];
 
-        $this->logger->expects($this->exactly(3))
-                     ->method('info')
-                     ->withConsecutive(...$message);
+        $invokedCount = self::exactly(count($expectations));
 
-        $method = $this->get_reflection_method('httpInit');
+        $this->logger->expects($invokedCount)
+                     ->method('info')
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
+
+        $method = $this->getReflectionMethod('httpInit');
         $result = $method->invoke($this->class);
 
         $this->assertTrue($result);
@@ -55,10 +62,10 @@ class PushHttpInitTest extends PushTest
      */
     public function testHttpInitSucceedsWithKey(): void
     {
-        $this->set_reflection_property_value('providerCertFile', 'key.p8');
-        $this->set_reflection_property_value('providerTeamId', 'TheTeam');
-        $this->set_reflection_property_value('providerKeyId', 'TheKey');
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('providerCertFile', 'key.p8');
+        $this->setReflectionPropertyValue('providerTeamId', 'TheTeam');
+        $this->setReflectionPropertyValue('providerKeyId', 'TheKey');
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $key = $this->getMockBuilder('Lcobucci\JWT\Signer\Key')
                     ->disableOriginalConstructor()
@@ -97,15 +104,24 @@ class PushHttpInitTest extends PushTest
                 ->with($this->isInstanceOf('Lcobucci\JWT\Signer\Ecdsa\Sha256'), $key)
                 ->willReturn($token);
 
-        $this->logger->expects($this->exactly(3))
-                     ->method('info')
-                     ->withConsecutive(
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with key.' ],
-                         [ 'Initialized HTTP/2 backend.' ]
-                     );
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with key.',
+            'Initialized HTTP/2 backend.',
+        ];
 
-        $method = $this->get_reflection_method('httpInit');
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
+                     ->method('info')
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
+
+        $method = $this->getReflectionMethod('httpInit');
         $result = $method->invoke($this->class);
 
         $this->assertTrue($result);
@@ -121,10 +137,10 @@ class PushHttpInitTest extends PushTest
      */
     public function testHttpInitThrowsExceptionOnCurlSetoptFail(): void
     {
-        $this->set_reflection_property_value('providerCertFile', 'key.p8');
-        $this->set_reflection_property_value('providerTeamId', 'TheTeam');
-        $this->set_reflection_property_value('providerKeyId', 'TheKey');
-        $this->set_reflection_property_value('logger', $this->logger);
+        $this->setReflectionPropertyValue('providerCertFile', 'key.p8');
+        $this->setReflectionPropertyValue('providerTeamId', 'TheTeam');
+        $this->setReflectionPropertyValue('providerKeyId', 'TheKey');
+        $this->setReflectionPropertyValue('logger', $this->logger);
 
         $this->mock_function('curl_setopt_array', fn() => false);
 
@@ -165,17 +181,26 @@ class PushHttpInitTest extends PushTest
                 ->with($this->isInstanceOf('Lcobucci\JWT\Signer\Ecdsa\Sha256'), $key)
                 ->willReturn($token);
 
-        $this->logger->expects($this->exactly(2))
+        $expectations = [
+            'Trying to initialize HTTP/2 backend...',
+            'Initializing HTTP/2 backend with key.',
+        ];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->logger->expects($invokedCount)
                      ->method('info')
-                     ->withConsecutive(
-                         [ 'Trying to initialize HTTP/2 backend...' ],
-                         [ 'Initializing HTTP/2 backend with key.' ],
-                     );
+                     ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                         $currentInvocationCount = $invokedCount->numberOfInvocations();
+                         $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                         $this->assertSame($currentExpectation, $parameters);
+                     });
 
         $this->expectException('ApnsPHP\Exception');
         $this->expectExceptionMessage('Unable to initialize HTTP/2 backend.');
 
-        $method = $this->get_reflection_method('httpInit');
+        $method = $this->getReflectionMethod('httpInit');
 
         # phpstan doesn't detect the potential throw through ReflectionMethod.
         # Verified that by making the method public and calling it directly

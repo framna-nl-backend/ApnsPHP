@@ -17,7 +17,7 @@ use ApnsPHP\Message\PushType;
  *
  * @covers \ApnsPHP\Message
  */
-class MessageGetTest extends MessageTest
+class MessageGetTestCase extends MessageTestCase
 {
     /**
      * Test that getText() gets the message text.
@@ -26,7 +26,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetText(): void
     {
-        $this->set_reflection_property_value('text', 'My Message');
+        $this->setReflectionPropertyValue('text', 'My Message');
 
         $value = $this->class->getText();
 
@@ -40,7 +40,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetTitle(): void
     {
-        $this->set_reflection_property_value('title', 'My Title');
+        $this->setReflectionPropertyValue('title', 'My Title');
 
         $value = $this->class->getTitle();
 
@@ -54,7 +54,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetBadge(): void
     {
-        $this->set_reflection_property_value('badge', 2);
+        $this->setReflectionPropertyValue('badge', 2);
 
         $value = $this->class->getBadge();
 
@@ -68,7 +68,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetSound(): void
     {
-        $this->set_reflection_property_value('sound', 'jingle');
+        $this->setReflectionPropertyValue('sound', 'jingle');
 
         $value = $this->class->getSound();
 
@@ -82,7 +82,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetCategory(): void
     {
-        $this->set_reflection_property_value('category', 'news-1');
+        $this->setReflectionPropertyValue('category', 'news-1');
 
         $value = $this->class->getCategory();
 
@@ -96,7 +96,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetThreadId(): void
     {
-        $this->set_reflection_property_value('threadId', 'news-1');
+        $this->setReflectionPropertyValue('threadId', 'news-1');
 
         $value = $this->class->getThreadId();
 
@@ -110,7 +110,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetContentAvailable(): void
     {
-        $this->set_reflection_property_value('contentAvailable', true);
+        $this->setReflectionPropertyValue('contentAvailable', true);
 
         $value = $this->class->getContentAvailable();
 
@@ -124,7 +124,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetMutableContent(): void
     {
-        $this->set_reflection_property_value('mutableContent', true);
+        $this->setReflectionPropertyValue('mutableContent', true);
 
         $value = $this->class->getMutableContent();
 
@@ -138,7 +138,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetAutoAdjustLongPayload(): void
     {
-        $this->set_reflection_property_value('autoAdjustLongPayload', false);
+        $this->setReflectionPropertyValue('autoAdjustLongPayload', false);
 
         $value = $this->class->getAutoAdjustLongPayload();
 
@@ -152,7 +152,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetExpiry(): void
     {
-        $this->set_reflection_property_value('expiryValue', 600);
+        $this->setReflectionPropertyValue('expiryValue', 600);
 
         $value = $this->class->getExpiry();
 
@@ -166,7 +166,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetTopic(): void
     {
-        $this->set_reflection_property_value('topic', 'My App');
+        $this->setReflectionPropertyValue('topic', 'My App');
 
         $value = $this->class->getTopic();
 
@@ -180,7 +180,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetCollapseId(): void
     {
-        $this->set_reflection_property_value('collapseId', 'news-1');
+        $this->setReflectionPropertyValue('collapseId', 'news-1');
 
         $value = $this->class->getCollapseId();
 
@@ -194,7 +194,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetPriority(): void
     {
-        $this->set_reflection_property_value('priority', Priority::ConsiderPowerUsage);
+        $this->setReflectionPropertyValue('priority', Priority::ConsiderPowerUsage);
 
         $value = $this->class->getPriority();
 
@@ -208,7 +208,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetPushType(): void
     {
-        $this->set_reflection_property_value('pushType', PushType::Alert);
+        $this->setReflectionPropertyValue('pushType', PushType::Alert);
 
         $value = $this->class->getPushType();
 
@@ -222,7 +222,7 @@ class MessageGetTest extends MessageTest
      */
     public function testGetCustomIdentifier(): void
     {
-        $this->set_reflection_property_value('customIdentifier', '3491ac4b-0681-4c92-8308-d8d8441f4e64');
+        $this->setReflectionPropertyValue('customIdentifier', '3491ac4b-0681-4c92-8308-d8d8441f4e64');
 
         $value = $this->class->getCustomIdentifier();
 
@@ -241,7 +241,7 @@ class MessageGetTest extends MessageTest
             'my-message' => 'My Message',
         ];
 
-        $this->set_reflection_property_value('customProperties', $properties);
+        $this->setReflectionPropertyValue('customProperties', $properties);
 
         $value = $this->class->getCustomProperty('my-title');
 
@@ -260,7 +260,7 @@ class MessageGetTest extends MessageTest
             'my-message' => 'My Message',
         ];
 
-        $this->set_reflection_property_value('customProperties', $properties);
+        $this->setReflectionPropertyValue('customProperties', $properties);
 
         $this->expectException('ApnsPHP\Message\Exception');
         $this->expectExceptionMessage("No property exists with the specified name 'my-body'.");
@@ -280,7 +280,7 @@ class MessageGetTest extends MessageTest
             'my-message' => 'My Message',
         ];
 
-        $this->set_reflection_property_value('customProperties', $properties);
+        $this->setReflectionPropertyValue('customProperties', $properties);
 
         $value = $this->class->getCustomPropertyNames();
 
@@ -311,7 +311,7 @@ class MessageGetTest extends MessageTest
             '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485B'
         ];
 
-        $this->set_reflection_property_value('deviceTokens', $tokens);
+        $this->setReflectionPropertyValue('deviceTokens', $tokens);
 
         $value = $this->class->getRecipientsCount();
 
@@ -330,7 +330,7 @@ class MessageGetTest extends MessageTest
             '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485B'
         ];
 
-        $this->set_reflection_property_value('deviceTokens', $tokens);
+        $this->setReflectionPropertyValue('deviceTokens', $tokens);
 
         $value = $this->class->getRecipients();
 
@@ -349,7 +349,7 @@ class MessageGetTest extends MessageTest
             '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485B'
         ];
 
-        $this->set_reflection_property_value('deviceTokens', $tokens);
+        $this->setReflectionPropertyValue('deviceTokens', $tokens);
 
         $value = $this->class->getRecipient(1);
 
@@ -368,7 +368,7 @@ class MessageGetTest extends MessageTest
             '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485B'
         ];
 
-        $this->set_reflection_property_value('deviceTokens', $tokens);
+        $this->setReflectionPropertyValue('deviceTokens', $tokens);
 
         $this->expectException('ApnsPHP\Message\Exception');
         $this->expectExceptionMessage("No recipient at index '3'");

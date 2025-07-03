@@ -15,7 +15,7 @@ namespace ApnsPHP\Message\Tests;
  *
  * @covers \ApnsPHP\Message\CustomMessage
  */
-class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
+class CustomMessageGetPayloadDictionaryTestCase extends CustomMessageTestCase
 {
     /**
      * Test that getPayloadDictionary returns complete payload with body if locKey isn't set
@@ -60,7 +60,7 @@ class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
             'name' => 'value'
         ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->getReflectionMethod('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -109,7 +109,7 @@ class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
             'name' => 'value'
         ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->getReflectionMethod('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }
@@ -123,7 +123,7 @@ class CustomMessageGetPayloadDictionaryTest extends CustomMessageTest
     {
         $payload = [ 'aps' => [ 'alert' => [] ] ];
 
-        $result = $this->get_reflection_method('getPayloadDictionary')->invoke($this->class);
+        $result = $this->getReflectionMethod('getPayloadDictionary')->invoke($this->class);
 
         $this->assertEquals($payload, $result);
     }

@@ -35,7 +35,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: uopz
-          tools: phpunit:9.5.x
+          tools: phpunit:10.5.x
 
       - name: Setup problem matchers for PHP
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"

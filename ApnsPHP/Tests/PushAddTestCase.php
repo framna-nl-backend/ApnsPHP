@@ -15,7 +15,7 @@ namespace ApnsPHP\Tests;
  *
  * @covers \ApnsPHP\Push
  */
-class PushAddTest extends PushTest
+class PushAddTestCase extends PushTestCase
 {
     /**
      * Test that add() successfully adds one message
@@ -26,20 +26,20 @@ class PushAddTest extends PushTest
     {
         $this->message->expects($this->once())
                       ->method('getPayLoad')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $this->message->expects($this->once())
                       ->method('getRecipientsCount')
-                      ->will($this->returnValue(1));
+                      ->willReturn(1);
 
         $this->message->expects($this->once())
                       ->method('selfForRecipient')
                       ->with(0)
-                      ->will($this->returnValue($this->message));
+                      ->willReturn($this->message);
 
         $this->class->add($this->message);
 
-        $queue = $this->get_reflection_property('messageQueue')->getValue($this->class);
+        $queue = $this->getReflectionProperty('messageQueue')->getValue($this->class);
 
         $this->assertEquals($this->message, $queue[1]['MESSAGE']);
     }
@@ -60,20 +60,30 @@ class PushAddTest extends PushTest
 
         $this->message->expects($this->once())
                       ->method('getPayLoad')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $this->message->expects($this->once())
                       ->method('getRecipientsCount')
-                      ->will($this->returnValue(4));
+                      ->willReturn(4);
 
-        $this->message->expects($this->exactly(4))
+        $expectations = [0, 1, 2, 3];
+
+        $invokedCount = self::exactly(count($expectations));
+
+        $this->message->expects($invokedCount)
                       ->method('selfForRecipient')
-                      ->withConsecutive([0], [1], [2], [3])
-                      ->will($this->returnValue($this->message));
+                      ->willReturnCallback(function ($parameters) use ($invokedCount, $expectations) {
+                          $currentInvocationCount = $invokedCount->numberOfInvocations();
+                          $currentExpectation = $expectations[$currentInvocationCount - 1];
+
+                          $this->assertSame($currentExpectation, $parameters);
+
+                          return $this->message;
+                      });
 
         $this->class->add($this->message);
 
-        $queue = $this->get_reflection_property('messageQueue')->getValue($this->class);
+        $queue = $this->getReflectionProperty('messageQueue')->getValue($this->class);
 
         $this->assertEquals($messages, $queue);
     }
@@ -87,15 +97,15 @@ class PushAddTest extends PushTest
     {
         $this->message->expects($this->once())
                       ->method('getPayLoad')
-                      ->will($this->returnValue('payload'));
+                      ->willReturn('payload');
 
         $this->message->expects($this->once())
                       ->method('getRecipientsCount')
-                      ->will($this->returnValue(0));
+                      ->willReturn(0);
 
         $this->class->add($this->message);
 
-        $queue = $this->get_reflection_property('messageQueue')->getValue($this->class);
+        $queue = $this->getReflectionProperty('messageQueue')->getValue($this->class);
 
         $this->assertArrayEmpty($queue);
     }

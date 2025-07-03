@@ -14,7 +14,7 @@ namespace ApnsPHP\Message\Tests;
  *
  * @covers \ApnsPHP\Message\CustomMessage
  */
-class CustomMessageGetTest extends CustomMessageTest
+class CustomMessageGetTestCase extends CustomMessageTestCase
 {
     /**
      * Test that getActionLocKey() gets the view button title.
@@ -23,7 +23,7 @@ class CustomMessageGetTest extends CustomMessageTest
      */
     public function testGetActionLocKey(): void
     {
-        $this->set_reflection_property_value('actionLocKey', 'My Action');
+        $this->setReflectionPropertyValue('actionLocKey', 'My Action');
 
         $value = $this->class->getActionLocKey();
 
@@ -37,7 +37,7 @@ class CustomMessageGetTest extends CustomMessageTest
      */
     public function testGetLocKey(): void
     {
-        $this->set_reflection_property_value('locKey', 'My Alert');
+        $this->setReflectionPropertyValue('locKey', 'My Alert');
 
         $value = $this->class->getLocKey();
 
@@ -51,7 +51,7 @@ class CustomMessageGetTest extends CustomMessageTest
      */
     public function testGetLocArgs(): void
     {
-        $this->set_reflection_property_value('locArgs', [ 'args' ]);
+        $this->setReflectionPropertyValue('locArgs', [ 'args' ]);
 
         $value = $this->class->getLocArgs();
 
@@ -65,7 +65,7 @@ class CustomMessageGetTest extends CustomMessageTest
      */
     public function testGetLaunchImage(): void
     {
-        $this->set_reflection_property_value('launchImage', 'my-image');
+        $this->setReflectionPropertyValue('launchImage', 'my-image');
 
         $value = $this->class->getLaunchImage();
 
@@ -79,7 +79,7 @@ class CustomMessageGetTest extends CustomMessageTest
      */
     public function testGetSubTitle(): void
     {
-        $this->set_reflection_property_value('subTitle', 'My amazing notification');
+        $this->setReflectionPropertyValue('subTitle', 'My amazing notification');
 
         $value = $this->class->getSubTitle();
 

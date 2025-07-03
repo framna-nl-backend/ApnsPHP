@@ -14,7 +14,7 @@ namespace ApnsPHP\Tests;
  *
  * @covers \ApnsPHP\Push
  */
-class PushGetTest extends PushTest
+class PushGetTestCase extends PushTestCase
 {
     /**
      * Test that getSendRetryTimes() returns how often sends should be retried.
@@ -83,7 +83,7 @@ class PushGetTest extends PushTest
      */
     public function testGetMessageQueue(): void
     {
-        $this->set_reflection_property_value('messageQueue', [ 'queue' ]);
+        $this->setReflectionPropertyValue('messageQueue', [ 'queue' ]);
 
         $value = $this->class->getMessageQueue(false);
 
@@ -99,7 +99,7 @@ class PushGetTest extends PushTest
      */
     public function testGetMessageQueueEmptiesQueue(): void
     {
-        $this->set_reflection_property_value('messageQueue', [ 'queue' ]);
+        $this->setReflectionPropertyValue('messageQueue', [ 'queue' ]);
 
         $value = $this->class->getMessageQueue();
 
@@ -115,7 +115,7 @@ class PushGetTest extends PushTest
      */
     public function testGetErrors(): void
     {
-        $this->set_reflection_property_value('errors', [ 'errors' ]);
+        $this->setReflectionPropertyValue('errors', [ 'errors' ]);
 
         $value = $this->class->getErrors(false);
 
@@ -131,7 +131,7 @@ class PushGetTest extends PushTest
      */
     public function testGetErrorsEmptiesErrors(): void
     {
-        $this->set_reflection_property_value('errors', [ 'errors' ]);
+        $this->setReflectionPropertyValue('errors', [ 'errors' ]);
 
         $value = $this->class->getErrors();
 

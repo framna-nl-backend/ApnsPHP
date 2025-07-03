@@ -17,7 +17,7 @@ use ApnsPHP\Message\PushType;
  *
  * @covers \ApnsPHP\Message
  */
-class MessageSetTest extends MessageTest
+class MessageSetTestCase extends MessageTestCase
 {
     /**
      * Unit test data provider for reserved apple namespace keys.
@@ -332,7 +332,7 @@ class MessageSetTest extends MessageTest
      */
     public function testSetAdditionalCustomProperty(): void
     {
-        $this->set_reflection_property_value('customProperties', [ 'myId' => 'my-news-1' ]);
+        $this->setReflectionPropertyValue('customProperties', [ 'myId' => 'my-news-1' ]);
 
         $this->class->setCustomProperty('mySecondId', 'my-sport-news-1');
 
