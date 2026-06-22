@@ -202,13 +202,9 @@ class PushHttpInitTest extends PushTestCase
 
         $method = $this->getReflectionMethod('httpInit');
 
-        # phpstan doesn't detect the potential throw through ReflectionMethod.
-        # Verified that by making the method public and calling it directly
-        # it's detected just fine.
-        # May be https://github.com/phpstan/phpstan/issues/7719
         try {
             $method->invoke($this->class);
-        } catch (Exception $e) { /* @phpstan-ignore-line */
+        } catch (Exception $e) {
             $this->unmock_function('curl_setopt_array');
             $this->unmock_method([ 'Lcobucci\JWT\Signer\Key\InMemory', 'file' ]);
             $this->unmock_method([ 'Lcobucci\JWT\Configuration', 'builder' ]);
